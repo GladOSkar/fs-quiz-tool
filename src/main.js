@@ -34,6 +34,17 @@ function showLink() {
 }
 
 
+function removeLink() {
+
+	var linkEl = document.getElementById('shareLink')
+	linkEl.href = ''
+	linkEl.innerHTML = ''
+
+	document.querySelector('#sharing input').style.display = 'block'
+
+}
+
+
 async function shareQuiz() {
 
 	if (state.id) {
@@ -222,12 +233,13 @@ function createQuiz() {
 
 	console.log('Creating new quiz')
 
+	state = defaultState
+	removeLink()
+
 	if (parseSpreadsheet().success == false)
 		return
 
 	console.log('Spreadsheet parsing successful')
-
-	state.timer = 0
 
 	state.title = document.getElementById('titleField').value
 	updateTitles()
@@ -250,8 +262,6 @@ function endQuiz() {
 
 	if (state.interval)
 		clearInterval(state.interval)
-
-	state = defaultState
 
 	console.log('Quiz ended')
 
