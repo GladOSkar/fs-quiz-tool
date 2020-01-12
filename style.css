@@ -1,0 +1,102 @@
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	font-family: sans-serif;
+	font-size: 20px;
+}
+
+header {
+	text-align: center;
+}
+
+main {
+	width: 100%;
+	max-width: 700px;
+	margin: 42px auto;
+	text-align: center;
+}
+
+img {
+	display: block;
+	margin: auto;
+	max-width: 90%;
+}
+
+.view {
+	display: none;
+	text-align: center;
+}
+
+form {
+	text-align: left !important;
+}
+
+textarea, input {
+	margin-top: 8px;
+	border-radius: 3px;
+}
+
+input[type="button"] {
+	float: right;
+	cursor: pointer;
+	margin: 16px 0 16px 16px;
+	padding: 12px 16px;
+	border: none;
+	background: #C50E1F;
+	color: #fff;
+	font-size: 1em;
+	font-weight: bold;
+}
+
+input[type="button"].center {
+	float: none;
+}
+
+input[type="button"]:disabled {
+	cursor: auto;
+	background: #888 !important;
+}
+
+textarea, input[type="text"] {
+	background: #ddd;
+	margin-bottom: 16px;
+	padding: .5em;
+	border: 1px solid #888;
+	width: 100%;
+	font-size: 20px;
+}
+
+label {
+	cursor: pointer;
+}
+
+input[type="radio"], input[type="checkbox"] {
+	cursor: pointer;
+	margin-top: 10px;
+	float: left;
+	transform: scale(1.6);
+}
+
+input[type="radio"] + p, input[type="checkbox"] + p {
+	margin: 0 0 0 30px;
+	padding: 5px;
+	border-radius: 3px;
+}
+
+input[type="radio"]:checked + p {
+	background: #aaf;
+}
+
+input[type="radio"]:hover + p {
+	background: #ddd;
+}
+
+footer {
+	height: 200px;
+}
+
+#sharing a {
+	font-size: 16px;
+}

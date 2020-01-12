@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="theme-color" content="#c50e1f">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="style.css" rel="stylesheet" type="text/css">
+
+		<title>FS Quiz tool</title>
+
+	</head>
+
+	<body>
+
+		<header>
+
+			<h1>FS Czech Quiz Tool</h1>
+
+			Only works in modern browsers.
+
+		</header>
+
+		<main>
+
+			<form id="spreadsheet" class="view">
+
+				Title:<br>
+				<input type="text" id="titleField" required>
+				Paste your questions from a spreadsheet here:<br>
+				<textarea rows="20" id="questions" required></textarea>
+				<br>
+
+				<input type="button" value="Create Quiz" onclick="createQuiz()">
+
+			</form>
+
+			<div id="prescreen" class="view">
+				<h1></h1>
+				<input type="button" value="Start" onclick="startQuiz()" class="center">
+			</div>
+
+			<div id="quiz" class="view">
+				<h1></h1>
+				<div id="sharing">
+					<input type="button" value="Share This Quiz" onclick="shareQuiz()" class="center">
+					<br><a id="shareLink"></a><br>
+				</div>
+				<form>
+				</form>
+				<input type="button" value="Submit" onclick="submitQuiz()" style="background: #008029" id="quizSubmitButton" disabled>
+				<input type="button" value="Abort" onclick="abortQuiz()">
+			</div>
+
+			<div id="postscreen" class="view">
+				<h1></h1>
+				<input type="button" value="Restart" onclick="startQuiz()" class="center">
+				<input type="button" value="Create New Quiz" onclick="changeView('spreadsheet')" class="center">
+			</div>
+
+		</main>
+
+		<footer></footer>
+
+		<script src="main.js"></script>
+
+	</body>
+
+</html>
