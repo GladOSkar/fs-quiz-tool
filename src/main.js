@@ -1,4 +1,4 @@
-var state = {
+const defaultState = {
 	style: 'FSCzech',
 	id: null,
 	title: null,
@@ -7,6 +7,8 @@ var state = {
 	interval: null,
 	success: 0
 }
+
+var state = defaultState
 
 
 function changeView(view) {
@@ -248,6 +250,8 @@ function endQuiz() {
 
 	if (state.interval)
 		clearInterval(state.interval)
+
+	state = defaultState
 
 	console.log('Quiz ended')
 
