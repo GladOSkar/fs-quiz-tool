@@ -10,13 +10,19 @@ const defaultState = {
 
 var state = defaultState
 
+function clearState() {
+
+	state = JSON.parse(JSON.stringify(defaultState))
+
+}
+
 
 function changeView(view) {
 
 	for (el of document.querySelectorAll('.view'))
 		el.style.display = 'none'
 
-	document.getElementById(view).style.display = 'block'
+	document.getElementById(view).style.display = 'inline-block'
 
 }
 
@@ -233,7 +239,7 @@ function createQuiz() {
 
 	console.log('Creating new quiz')
 
-	state = defaultState
+	clearState()
 	removeLink()
 
 	if (parseSpreadsheet().success == false)
