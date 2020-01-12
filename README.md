@@ -1,7 +1,7 @@
 FS-Quiz-Tool
 ============
 
-Tool to train for Quizzes
+Tool for fs teams to train for registration qualification quizzes
 
 ## ToDo
 
