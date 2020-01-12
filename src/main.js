@@ -53,10 +53,8 @@ async function shareQuiz() {
 	var db = 'https://quiz.fasttube.de/db/'
 
 	var response = await fetch(db, {
-		method: 'PUT',
-		headers: {
-			'Content-Type': 'text/plain'
-		},
+		method: 'POST',
+		headers: {'Content-Type': 'text/plain'},
 		body: JSON.stringify(quizData)
 	})
 
