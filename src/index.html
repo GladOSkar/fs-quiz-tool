@@ -25,17 +25,19 @@
 
 		<main>
 
-			<form id="spreadsheet" class="view">
+			<div id="spreadsheet" class="view">
+				<form>
 
-				Title:<br>
-				<input type="text" id="titleField" required>
-				Paste your questions from a spreadsheet here:<br>
-				<textarea rows="20" id="questions" required></textarea>
-				<br>
+					Title:<br>
+					<input type="text" id="titleField" required>
+					Paste your questions from a spreadsheet here:<br>
+					<textarea rows="20" id="questions" required></textarea>
+					<br>
 
-				<input type="button" value="Create Quiz" onclick="createQuiz()">
+					<input type="button" value="Create Quiz" onclick="createQuiz()">
 
-			</form>
+				</form>
+			</div>
 
 			<div id="prescreen" class="view">
 				<h1></h1>
@@ -62,7 +64,12 @@
 
 		</main>
 
-		<footer></footer>
+		<footer>
+			&copy; 2020 Oskar / FaSTTUBe
+			&middot; GPLv3
+			&middot; Code &amp; feedback: <a href="https://git.fasttube.de/FaSTTUBe/fs-quiz-tool">git</a>
+			&middot; <span id="meme"></span>
+		</footer>
 
 		<script src="main.js"></script>
 
