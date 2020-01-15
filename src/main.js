@@ -178,14 +178,11 @@ function parseSpreadsheet() {
 }
 
 
-function startQuiz() {
-
-	state.success = false
-
-	console.log('Starting/Resuming quiz. State:')
-	console.log(state)
+function renderQuiz() {
 
 	var quizForm = document.querySelector('#quiz form')
+
+	quizForm.innerHTML = ''
 
 	for (const [i, q] of state.questions.entries()) {
 
@@ -218,6 +215,18 @@ function startQuiz() {
 		quizForm.innerHTML += html
 
 	}
+
+}
+
+
+function startQuiz() {
+
+	state.success = false
+
+	console.log('Starting/Resuming quiz. State:')
+	console.log(state)
+
+	renderQuiz()
 
 	changeView('quiz')
 
@@ -325,6 +334,7 @@ function submitQuiz() {
 	text += state.success ? 'Yay you did it!' : 'Try again!'
 
 	if (!state.success) {
+		renderQuiz()
 		startTimer()
 		alert(text)
 	}
