@@ -369,7 +369,12 @@ function submitQuiz() {
 			value.sort()
 		}
 
-		if (JSON.stringify(state.questions[idx].answers) == JSON.stringify(value))
+		var correctAnswer = JSON.stringify(state.questions[idx].answers)
+		var givenAnswer = JSON.stringify(value)
+
+		console.log('Comparing: ' + givenAnswer + ' == ' + correctAnswer + '?: ' + (givenAnswer == correctAnswer))
+
+		if (givenAnswer == correctAnswer)
 			correct++
 
 	}
