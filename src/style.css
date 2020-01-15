@@ -32,8 +32,8 @@ main {
 	overflow: auto;
 	width: 100%;
 	max-width: 700px;
-	margin: 42px auto;
-	padding-bottom: 46px; /* Footer height */
+	margin: 42px auto 0;
+	padding-bottom: 128px; /* Footer height */
 	text-align: center;
 }
 
