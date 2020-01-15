@@ -362,7 +362,7 @@ function submitQuiz() {
 		console.log(key + ": " + value)
 
 		// "q3" -> 3
-		var idx = key[1]
+		var idx = key.slice(1)
 
 		if (state.questions[idx].type == 'ChooseOne' || state.questions[idx].type == 'ChooseAny') {
 			state.questions[idx].answers.sort()
