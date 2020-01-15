@@ -3,9 +3,11 @@ const defaultState = {
 	id: null,
 	title: null,
 	questions: [],
-	timer: 0,
-	interval: null,
-	success: 0
+	success: 0,
+	submitTimer: 0,
+	submitInterval: null,
+	totalTimer: 0,
+	totalInterval: null,
 }
 
 var state = defaultState
@@ -91,38 +93,66 @@ async function shareQuiz() {
 }
 
 
-function updateTimer() {
+function updateTotalTimer() {
 
-	var button = document.getElementById('quizSubmitButton')
+	var timerEls = document.querySelectorAll('.totaltimer')
 
-	if (state.timer > 0) {
+	var minutes = Math.floor(state.totalTimer / 60)
+	var seconds = state.totalTimer % 60
 
-		button.value = 'Wait ' + state.timer + 's'
-		button.disabled = true
-		state.timer -= 1
+	var text = minutes + ':' + ('0' + seconds).slice(-2)
 
-	} else {
+	for (timerEl of timerEls)
+		timerEl.innerHTML = text
 
-		button.value = 'Submit Answers'
-		button.disabled = false
-		clearInterval(state.interval)
-
-	}
+	state.totalTimer++
 
 	localStorage.setItem('state', JSON.stringify(state))
 
 }
 
 
-function startTimer(time) {
+function startTotalTimer() {
 
-	state.timer = time || 30
+	console.log('Setting totalTimer to ' + state.totalTimer + ' seconds.')
 
-	console.log('Setting timer to ' + state.timer + ' seconds.')
+	updateTotalTimer()
 
-	updateTimer()
+	state.totalInterval = setInterval(updateTotalTimer, 1000)
 
-	state.interval = setInterval(updateTimer, 1000)
+}
+
+
+function updateSubmitTimer() {
+
+	var button = document.getElementById('quizSubmitButton')
+
+	if (state.submitTimer > 0) {
+
+		button.value = 'Wait ' + state.submitTimer + 's'
+		button.disabled = true
+		state.submitTimer -= 1
+
+	} else {
+
+		button.value = 'Submit Answers'
+		button.disabled = false
+		clearInterval(state.submitInterval)
+
+	}
+
+}
+
+
+function startSubmitTimer(time) {
+
+	state.submitTimer = time || 30
+
+	console.log('Setting submitTimer to ' + state.submitTimer + ' seconds.')
+
+	updateSubmitTimer()
+
+	state.submitInterval = setInterval(updateSubmitTimer, 1000)
 
 }
 
@@ -230,14 +260,29 @@ function startQuiz() {
 
 	changeView('quiz')
 
-	if (state.timer > 0)
-		startTimer(state.timer)
+	if (state.submitTimer > 0)
+		startSubmitTimer(state.submitTimer)
 	else
-		updateTimer()
+		updateSubmitTimer()
+
+	startTotalTimer()
 
 	console.log('Quiz started/resumed')
 
 }
+
+function reStartQuiz() {
+
+	console.log('Restarting quiz');
+
+	state.totalTimer = 0
+	state.submitTimer = 0
+	state.success = 0
+
+	startQuiz()
+
+}
+
 
 function updateTitles() {
 	document.querySelector('#prescreen h1').innerHTML = state.title || ''
@@ -275,8 +320,10 @@ function endQuiz() {
 	document.querySelector('#quiz form').innerHTML = ''
 	changeView('postscreen')
 
-	if (state.interval)
-		clearInterval(state.interval)
+	if (state.submitInterval)
+		clearInterval(state.submitInterval)
+
+	clearInterval(state.totalInterval)
 
 	console.log('Quiz ended')
 
@@ -335,7 +382,7 @@ function submitQuiz() {
 
 	if (!state.success) {
 		renderQuiz()
-		startTimer()
+		startSubmitTimer()
 		alert(text)
 	}
 

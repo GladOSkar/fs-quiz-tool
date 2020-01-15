@@ -104,10 +104,6 @@ input[type="radio"]:hover + p {
 	background: #ddd;
 }
 
-footer {
-	height: 200px;
-}
-
 #sharing a {
 	font-size: 16px;
 }
