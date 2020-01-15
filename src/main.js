@@ -485,6 +485,10 @@ window.onload = async function() {
 
 	console.log('onload')
 
+	var browserWarning = document.getElementById('browserwarning')
+
+	browserWarning.style.display = (() => 'none')()
+
 	var stateString = localStorage.getItem('state')
 
 	var urlId = idFromUrl()
