@@ -3,8 +3,13 @@
 }
 
 html, body {
+	position: absolute;
 	font-family: sans-serif;
 	font-size: 20px;
+	width: 100vw;
+	min-height: 100vh;
+	margin: 0;
+	padding: 0;
 }
 
 header, footer {
@@ -13,7 +18,12 @@ header, footer {
 }
 
 footer {
-	color: #888;
+	position: absolute;
+	bottom: 0;
+	width: 100vw;
+	height: 64px;
+	padding: 16px 0;
+	color: #999;
 }
 
 main {
@@ -22,6 +32,7 @@ main {
 	width: 100%;
 	max-width: 700px;
 	margin: 42px auto;
+	padding-bottom: 46px; /* Footer height */
 	text-align: center;
 }
 
