@@ -159,7 +159,7 @@ function startSubmitTimer(time) {
 
 function parseLine(line) {
 
-	// replace newline markers with newlines
+	// replace newline markers with html newlines
 	var els = line.replace(/⎊/g, '<br>').split('\t')
 
 	if (els.length < 4) {
@@ -194,7 +194,23 @@ function parseSpreadsheet() {
 
 	var textEl = document.getElementById('questions')
 
-	var text = textEl.value.replace(/"([^"]|"")+"/g, m => m.replace(/\n/g, '⎊').replace(/""/g, '"').replace(/^"(.*)"$/, '$1'))
+	/* MAGIC:
+	 *	1. Find quoted multiline cells (<tab>"a<newline>b"<tab>)
+	 *	2. Replace all newlines inside with a special char so the cell won't be
+	 *		split later (<tab>"a<specialchar>b"<tab>)
+	 *	3. Replace escaped quotes ("a ""b"" c") with single ones ("a "b" c")
+	 *	4. Remove the outer quotes and tabs (a<specialchar>b)
+	 *	5. Replace all tabs inside with spaces
+	 *	6. Re-add outer tabs (<tab>a<specialchar>b<tab>)
+	 */
+
+	var text = textEl.value.replace(/\t"([^"\n]|"")+\n([^"]|"")+"\t/g,
+		m => m.replace(/\n/g, '⎊')
+			  .replace(/""/g, '"')
+			  .replace(/^\t"(.*)"\t$/, '$1')
+			  .replace(/\t/g, ' ')
+			  .replace(/^(.*)$/g, '\t$1\t')
+	)
 
 	state.questions = text.split('\n').map(parseLine)
 
@@ -293,15 +309,22 @@ function createQuiz() {
 
 	console.log('Creating new quiz')
 
+	state.title = document.getElementById('titleField').value
+	if (state.title == '') {
+		alert('Please enter a title')
+		return
+	}
+
 	clearState()
 	removeLink()
 
-	if (parseSpreadsheet().success == false)
+	if (parseSpreadsheet().success == false) {
+		console.log('Quiz creation failed.')
 		return
+	}
 
 	console.log('Spreadsheet parsing successful')
 
-	state.title = document.getElementById('titleField').value
 	updateTitles()
 
 	changeView('prescreen')
@@ -455,7 +478,7 @@ const memes = [
 	'Eine Runde Kicker?',
 	'Hulkdrian!',
 	'Jetz\' bin i\' wieda doa',
-	'Mmmmh Carbonstaub :P',
+	'Mmmmh Carbonstaub',
 	'#würthshausfranz',
 	'#berlinerluft',
 	'FaST<b>TUBe</b>, not Fast<b>COCUE</b>',
@@ -473,14 +496,14 @@ const memes = [
 	'Wer AMS sagt muss auch BMS sagen',
 	'Ist der Kabelbinder in der BOM?',
 	'*Fistbump*',
-	'Nividia',
+	'Nividia!',
 	'Ihr schafft das! :)',
 	'Klotzen, nicht kleckern!',
 	'*revving noises*',
 	'Resistance is futile',
 	'Jan schweißt das noch',
 	'Would Claude approve of this?',
-	'Im CAD hat\'s gepasst',
+	'Im CAD hat\'s noch gepasst',
 	'¯\\_(ツ)_/¯',
 	'AMK Brudi',
 	'Mmmhh cones',
