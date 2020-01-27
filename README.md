@@ -6,12 +6,13 @@ Tool for fs teams to train for registration qualification quizzes
 ## ToDo
 
 - Show answers and correctness
-- Check for invalid input
+- Server systemd service file
 
 ## Long term plans
 
-- Other versioons but FSCzech:
+- Other versions but FSCzech:
   - FSG
   - FSA
   - FSEast
+  - FSSpain
 - Penalties/Bonuses

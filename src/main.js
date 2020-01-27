@@ -162,28 +162,56 @@ function parseLine(line) {
 	// replace newline markers with html newlines
 	var els = line.replace(/⎊/g, '<br>').split('\t')
 
-	if (els.length < 4) {
-		alert('Information missing. At least 4 columns needed.')
+	var q = {}
+
+	if (els[0] != '') {
+		if (	els[0] == 'ChooseOne' ||
+				els[0] == 'ChooseAny' ||
+				els[0] == 'Text') {
+			q.type = els[0]
+		} else {
+			alert('Invalid type given on one line')
+			return null
+		}
+	} else {
+		alert('No type given on one line')
 		return null
 	}
 
-	var type = els[0]
+	if (els[1]) {
+		q.question = els[1]
+	} else {
+		alert('No question given on one line')
+		return null
+	}
 
 	// For multiple-choice, split lines into array
-	var choices = els[2].split('<br>')
-
-	// If multiple answers are allowed, they are ampersand-separated
-	var answers = (els[3]) ? els[3].split('<br>') : null
-
-	return {
-		question: els[1] || '[No question provided]',
-		type: type,
-		choices: choices,
-		answers: answers,
-		explanation: els[4] || '[No explanation provided]',
-		author: els[5] || '[No author provided]',
-		picture: els[6] || null,
+	if (q.type == 'ChooseOne' || q.type == 'ChooseAny') {
+		if (els[2] || els[2] != '') {
+			q.choices = els[2].split('<br>')
+		} else {
+			alert('"Choose" question but no choices given at question "'
+				+ q.question + '"')
+			return null
+		}
 	}
+
+	// If multiple answers are allowed, they are newline-separated
+	// Also filter out empty lines because some people can't use spreadsheets
+	if (els[3] || els[3] != '') {
+		q.answers = els[3].split('<br>').filter(el => el != "");
+	} else {
+		alert('No answers given at question "'
+			+ q.question + '"')
+		return null
+	}
+
+	// Optional parameters
+	q.explanation	= els[4] || '[No explanation provided]'
+	q.author		= els[5] || '[No author provided]'
+	q.picture		= els[6] || null
+
+	return q
 
 }
 
@@ -204,7 +232,7 @@ function parseSpreadsheet() {
 	 *	6. Re-add outer tabs (<tab>a<specialchar>b<tab>)
 	 */
 
-	var text = textEl.value.replace(/\t"([^"\n]|"")+\n([^"]|"")+"\t/g,
+	var text = textEl.value.replace(/\t"([^"\n]|"")+\n([^"]|"")*"\t/g,
 		m => m.replace(/\n/g, '⎊')
 			  .replace(/""/g, '"')
 			  .replace(/^\t"(.*)"\t$/, '$1')
@@ -214,8 +242,10 @@ function parseSpreadsheet() {
 
 	state.questions = text.split('\n').map(parseLine)
 
-	if (state.questions[0] == null)
+	if (state.questions.some(el => el == null)) {
+		alert('Erroneous data. Please check and re-enter.')
 		return {success: false}
+	}
 
 	localStorage.setItem('state', JSON.stringify(state))
 
