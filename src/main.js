@@ -185,21 +185,22 @@ function parseLine(line) {
 		return null
 	}
 
-	// For multiple-choice, split lines into array
-	if (q.type == 'ChooseOne' || q.type == 'ChooseAny') {
-		if (els[2] || els[2] != '') {
-			q.choices = els[2].split('<br>')
-		} else {
-			alert('"Choose" question but no choices given at question "'
-				+ q.question + '"')
-			return null
-		}
+	// Split choices into array
+	// Choices for text questions are labels
+	// No choices (empty string) are okay for text questions
+	// Also filter out empty lines because some people can't use spreadsheets
+	if (els[2] || (q.type == 'Text' && els[2] == '')) {
+		q.choices = els[2].split('<br>').filter(el => el != "")
+	} else {
+		alert('No choices given at question "'
+			+ q.question + '"')
+		return null
 	}
 
 	// If multiple answers are allowed, they are newline-separated
 	// Also filter out empty lines because some people can't use spreadsheets
-	if (els[3] || els[3] != '') {
-		q.answers = els[3].split('<br>').filter(el => el != "");
+	if (els[3] && els[3] != '') {
+		q.answers = els[3].split('<br>').filter(el => el != "")
 	} else {
 		alert('No answers given at question "'
 			+ q.question + '"')
@@ -232,12 +233,12 @@ function parseSpreadsheet() {
 	 *	6. Re-add outer tabs (<tab>a<specialchar>b<tab>)
 	 */
 
-	var text = textEl.value.replace(/\t"([^"\n]|"")+\n([^"]|"")*"\t/g,
+	var text = textEl.value.replace(/\t"([^"\n]|"")+\n([^"]|"")*"/g,
 		m => m.replace(/\n/g, '⎊')
 			  .replace(/""/g, '"')
-			  .replace(/^\t"(.*)"\t$/, '$1')
+			  .replace(/^\t"(.*)"$/, '$1')
 			  .replace(/\t/g, ' ')
-			  .replace(/^(.*)$/g, '\t$1\t')
+			  .replace(/^(.*)$/g, '\t$1')
 	)
 
 	state.questions = text.split('\n').map(parseLine)
@@ -280,10 +281,11 @@ function renderQuiz() {
 					? `<label><input type="radio" name="q${i}" value="${ci+1}"> <p>${c}</p></label><br>`
 					: `<label><input type="checkbox" name="q${i}" value="${ci+1}"> <p>${c}</p></label><br>`
 
-		} else {
+		} else if (q.type == 'Text') {
 
-			for (c of q.choices)
-				html += `<label>${c}<input type="text" name="q${i}"></label>`
+			// If choices were given, use them as labels, otherwise use generic label
+			for ([ai, a] of q.answers.entries())
+				html += `<label>${q.choices[ai] ? q.choices[ai] : 'Answer'}<input type="text" name="q${i}"></label>`
 
 		}
 
