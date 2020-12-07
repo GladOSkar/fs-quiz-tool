@@ -1,0 +1,11 @@
+[Unit]
+Description=FaSTTUBe FS Quiz Tool
+After=syslog.target network.target nginx.service
+
+[Service]
+User=www-data
+ExecStart=/usr/bin/python3 -m fs-quiz-tool-db
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

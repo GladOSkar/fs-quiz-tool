@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# PROVIDE: fs_quiz_tool
+# REQUIRE: LOGIN DAEMON NETWORKING
+# KEYWORD: fasttube fs quiz tool
+
+# Enable this script by adding:
+# fs_quiz_tool_enable="YES"
+# ... to /etc/rc.conf
+
+. /etc/rc.subr
+
+name="fs_quiz_tool"
+rcvar="fs_quiz_tool_enable"
+
+pidfile="/var/run/${name}.pid"
+
+task="/usr/local/bin/python3.7 -m fs-quiz-tool-db"
+procname="/usr/local/bin/python3.7"
+
+command="/usr/sbin/daemon"
+command_args="-p ${pidfile} ${task}"
+
+load_rc_config ${name}
+run_rc_command "$1"
