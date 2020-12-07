@@ -31,7 +31,7 @@ function changeView(view) {
 
 function showLink() {
 
-	var link = location.href + '?id=' + state.id
+	var link = location.origin + '/?id=' + state.id
 
 	var linkEl = document.getElementById('shareLink')
 	linkEl.href = link
@@ -71,7 +71,7 @@ async function shareQuiz() {
 	console.log(quizData)
 	console.log('Waiting for id')
 
-	var db = location.href + 'db'
+	var db = location.origin + '/db'
 
 	var response = await fetch(db, {
 		method: 'POST',
@@ -473,7 +473,7 @@ function abortQuiz() {
 
 function idFromUrl() {
 
-	var s = window.location.href.split('id=')
+	var s = window.location.search.split('id=')
 
 	if (s.length <= 1)
 		return null
@@ -486,7 +486,7 @@ async function fetchQuiz(id) {
 
 	console.log('Fetching quiz')
 
-	var url = location.href + 'db/' + id
+	var url = location.origin + '/db/' + id
 
 	var response = await fetch(url)
 
