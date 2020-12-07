@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request
 import json
 import string
 import random
@@ -7,12 +7,13 @@ import atexit
 app = Flask(__name__)
 
 filename = 'db.json'
-id_length = 32
+id_length = 16
 
 data = {}
 
 
 def startup():
+
 	global data
 	try:
 		fd = open(filename)
@@ -21,37 +22,38 @@ def startup():
 		pass
 
 
-@app.after_request
-def add_headers(response):
-	response.headers['Access-Control-Allow-Origin'] = '*'
-	response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-	return response
-
-
 @app.route('/<id>', methods = ['GET'])
 def get(id):
-	if id in data:
-		return data[id]
-	else:
-		return 'Error: Not found', 404
+	return data[id] if id in data else ('Error: Not found', 404)
 
 
 def generateRandomString():
 	return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(id_length))
 
+def generateNewKey():
+
+	id = generateRandomString()
+	while id in data:
+		id = generateRandomString()
+
+	return id
+
 @app.route('/', methods = ['POST'])
 def post():
-	id = generateRandomString()
+
+	id = generateNewKey()
 	data[id] = request.data.decode('UTF-8')
+
 	return id, 201
 
 
 def dumpDB():
+
 	if len(data) == 0:
 		return
 
-	fd = open(filename, 'w+')
 	try:
+		fd = open(filename, 'w+')
 		json.dump(data, fd)
 	finally:
 		fd.close()
@@ -59,6 +61,3 @@ def dumpDB():
 
 startup()
 atexit.register(dumpDB)
-
-if __name__ == "__main__":
-	app.run(host='0.0.0.0')
