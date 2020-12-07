@@ -1,19 +1,14 @@
-FS-Quiz-Tool
+FS Quiz Tool
 ============
 
 Tool for fs teams to train for registration qualification quizzes
 
-## ToDo
+To start the app run
 
-- Show answers and correctness
-- Server systemd service file
+```bash
+# clone, cd into repo
+pip install -e .
+python3 -m fs-quiz-tool-db
+```
 
-## Long term plans
-
-- Other versions but FSCzech:
-  - FSG (5-10m per Q, fail Q if timeout, forced to next Q)
-  - FSA (5-10m per Q, can hand in after timeout but timer for next question runs already. Shows how many teams have answered already)
-  - FSEast (All questions at once, one try)
-  - FSSpain (Sequentially like FSG, but can hand in about 3 times)
-  - FSSwitzerland (Sequentially without time limit)
-- Penalties/Bonuses
+Then, open <http://localhost:12345> in your browser.
