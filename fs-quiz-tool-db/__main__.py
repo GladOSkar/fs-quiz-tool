@@ -1,6 +1,15 @@
 from .app import app
+from flask import send_from_directory
 
 if __name__ == "__main__":
+
+	@app.route('/')
+	def get_root():
+		return send_from_directory('../web', 'index.html')
+
+	@app.route('/<path:path>')
+	def get_path(path):
+		return send_from_directory('../web', path)
 
 	@app.after_request
 	def add_headers(response):

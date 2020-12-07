@@ -31,7 +31,7 @@ function changeView(view) {
 
 function showLink() {
 
-	var link = 'https://quiz.fasttube.de/?id=' + state.id
+	var link = location.href + '?id=' + state.id
 
 	var linkEl = document.getElementById('shareLink')
 	linkEl.href = link
@@ -71,7 +71,7 @@ async function shareQuiz() {
 	console.log(quizData)
 	console.log('Waiting for id')
 
-	var db = 'https://quiz.fasttube.de/db/'
+	var db = location.href + 'db'
 
 	var response = await fetch(db, {
 		method: 'POST',
@@ -486,7 +486,7 @@ async function fetchQuiz(id) {
 
 	console.log('Fetching quiz')
 
-	var url = 'https://quiz.fasttube.de/db/' + id
+	var url = location.href + 'db/' + id
 
 	var response = await fetch(url)
 

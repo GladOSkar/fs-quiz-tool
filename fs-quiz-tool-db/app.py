@@ -22,7 +22,7 @@ def startup():
 		pass
 
 
-@app.route('/<id>', methods = ['GET'])
+@app.route('/db/<id>', methods = ['GET'])
 def get(id):
 	return data[id] if id in data else ('Error: Not found', 404)
 
@@ -38,7 +38,7 @@ def generateNewKey():
 
 	return id
 
-@app.route('/', methods = ['POST'])
+@app.route('/db', methods = ['POST'])
 def post():
 
 	id = generateNewKey()
