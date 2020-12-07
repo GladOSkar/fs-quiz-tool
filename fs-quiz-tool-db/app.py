@@ -1,4 +1,5 @@
 from flask import Flask, request
+import sys
 import json
 import string
 import random
@@ -6,7 +7,7 @@ import atexit
 
 app = Flask(__name__)
 
-filename = 'db.json'
+filename = sys.argv[1] if len(sys.argv) > 1 else 'db.json'
 id_length = 16
 
 data = {}

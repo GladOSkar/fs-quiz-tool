@@ -18,8 +18,11 @@ pidfile="/var/run/${name}.pid"
 task="/usr/local/bin/python3.7 -m fs-quiz-tool-db"
 procname="/usr/local/bin/python3.7"
 
-command="/usr/sbin/daemon"
-command_args="-p ${pidfile} ${task}"
+dbfile="/var/fs-quiz-tool/db.json"
+task="/usr/local/bin/python3.7 -m fs-quiz-tool-db ${dbfile}"
+procname="/usr/local/bin/python3.7"
+
+sig_stop="INT"
 
 load_rc_config ${name}
 run_rc_command "$1"

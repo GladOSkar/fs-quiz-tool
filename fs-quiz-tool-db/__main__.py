@@ -17,4 +17,4 @@ if __name__ == "__main__":
 		response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
 		return response
 
-	app.run(host='0.0.0.0', port=12345)
+	app.run(port=12345)
