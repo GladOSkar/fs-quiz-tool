@@ -7,13 +7,13 @@ This document provides examples for the question format
 
 Single-Choice question
 
-### Question Text
+##### Question Text
 
 ```text
 How many drivers per team are allowed at most?
 ```
 
-### Answer options
+##### Answer options
 
 ```text
 Unlimited, but the number of drivers per event is limited to two.
@@ -21,19 +21,19 @@ Unlimited, but the number of events per driver is limited to two.
 Six.
 ```
 
-### Correct Answer(s)
+##### Correct Answer(s)
 
 ```text
 3
 ```
 
-### Explanation
+##### Explanation
 
 ```text
 D 1.1.1: "[...] a maximum of six drivers are allowed for each team"
 ```
 
-### Author
+##### Author
 
 ```text
 John Doe
@@ -41,13 +41,13 @@ John Doe
 
 ## ChooseAny
 
-### Question Text
+##### Question Text
 
 ```text
 Due to rust and corrosion of the filler neck a new one need to be installed. choose one or more of the shown filler neck types(made of none clear material) that are allowed according to the FSG rules.
 ```
 
-### Answer options
+##### Answer options
 
 ```text
 a
@@ -56,26 +56,26 @@ c
 d
 ```
 
-### Correct Answer(s)
+##### Correct Answer(s)
 
 ```text
 2
 4
 ```
 
-### Explanation
+##### Explanation
 
 ```text
 CV 2.6
 ```
 
-### Author
+##### Author
 
 ```text
 Jane Doe
 ```
 
-### Image Link
+##### Image Link
 
 ```text
 https://i.ibb.co/m8C9VZp/image.png
@@ -83,39 +83,39 @@ https://i.ibb.co/m8C9VZp/image.png
 
 ## Text
 
-### Question Text
+##### Question Text
 
 ```text
 Calculate the torsional- and bending-nominal stress at the critical cross section for the load case shown below. Given: P = 12kW; n = 980 1/min; F = 500 N; xkrit = 110 mm; 0 ≤ x0 ≤ 120mm
 ```
 
-### Answer options
+##### Answer options
 
 ```text
 Torsional-nominal stress [N/mm², 1 decimal]
 Bending-nominal stress [N/mm², 1 decimal]
 ```
 
-### Correct Answer(s)
+##### Correct Answer(s)
 
 ```text
 17.1
 18.2
 ```
 
-### Explanation
+##### Explanation
 
 ```text
 https://i.ibb.co/1r3yqY7/2b.png
 ```
 
-### Author
+##### Author
 
 ```text
 Max Mustermann
 ```
 
-### Image Link
+##### Image Link
 
 ```text
 https://i.ibb.co/tYTdw86/2a.png
