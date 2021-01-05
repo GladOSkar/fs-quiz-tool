@@ -1,98 +1,3 @@
-const defaultState = {
-	style: 'FSCzech',
-	id: null,
-	title: null,
-	questions: [],
-	success: 0,
-	submitTimer: 0,
-	submitInterval: null,
-	totalTimer: 0,
-	totalInterval: null,
-}
-
-var state = defaultState
-
-function clearState() {
-
-	state = JSON.parse(JSON.stringify(defaultState))
-
-}
-
-
-function changeView(view) {
-
-	for (el of document.querySelectorAll('.view'))
-		el.style.display = 'none'
-
-	document.getElementById(view).style.display = 'block'
-
-}
-
-
-function showLink() {
-
-	var link = location.origin + '/?id=' + state.id
-
-	var linkEl = document.getElementById('shareLink')
-	linkEl.href = link
-	linkEl.innerHTML = link
-
-	document.querySelector('#sharing input').style.display = 'none'
-
-}
-
-
-function removeLink() {
-
-	var linkEl = document.getElementById('shareLink')
-	linkEl.href = ''
-	linkEl.innerHTML = ''
-
-	document.querySelector('#sharing input').style.display = 'inline-block'
-
-}
-
-
-async function shareQuiz() {
-
-	if (state.id) {
-		console.log('Showing saved local link')
-		showLink()
-		return
-	}
-
-	console.log('Saving quiz to server. QuizData:')
-
-	var quizData = {
-		title: state.title,
-		questions: state.questions
-	}
-
-	console.log(quizData)
-	console.log('Waiting for id')
-
-	var db = location.origin + '/db'
-
-	var response = await fetch(db, {
-		method: 'POST',
-		headers: {'Content-Type': 'text/plain'},
-		body: JSON.stringify(quizData)
-	})
-
-	if (response.ok == false) {
-		alert('Something went wrong while sharing')
-		return
-	}
-
-	var responseBody = await response.text()
-	console.log('Received id: ' + responseBody)
-	state.id = responseBody
-
-	showLink()
-
-}
-
-
 function updateTotalTimer() {
 
 	var timerEls = document.querySelectorAll('.totaltimer')
@@ -153,104 +58,6 @@ function startSubmitTimer(time) {
 	updateSubmitTimer()
 
 	state.submitInterval = setInterval(updateSubmitTimer, 1000)
-
-}
-
-
-function parseLine(line) {
-
-	// replace newline markers with html newlines
-	var els = line.replace(/⎊/g, '<br>').split('\t')
-
-	var q = {}
-
-	if (els[0] != '') {
-		if (	els[0] == 'ChooseOne' ||
-				els[0] == 'ChooseAny' ||
-				els[0] == 'Text') {
-			q.type = els[0]
-		} else {
-			alert('Invalid type given on one line')
-			return null
-		}
-	} else {
-		alert('No type given on one line')
-		return null
-	}
-
-	if (els[1]) {
-		q.question = els[1]
-	} else {
-		alert('No question given on one line')
-		return null
-	}
-
-	// Split choices into array
-	// Choices for text questions are labels
-	// No choices (empty string) are okay for text questions
-	// Also filter out empty lines because some people can't use spreadsheets
-	if (els[2] || (q.type == 'Text' && els[2] == '')) {
-		q.choices = els[2].split('<br>').filter(el => el != "")
-	} else {
-		alert('No choices given at question "'
-			+ q.question + '"')
-		return null
-	}
-
-	// If multiple answers are allowed, they are newline-separated
-	// Also filter out empty lines because some people can't use spreadsheets
-	if (els[3] && els[3] != '') {
-		q.answers = els[3].split('<br>').filter(el => el != "")
-	} else {
-		alert('No answers given at question "'
-			+ q.question + '"')
-		return null
-	}
-
-	// Optional parameters
-	q.explanation	= els[4] || '[No explanation provided]'
-	q.author		= els[5] || '[No author provided]'
-	q.picture		= els[6] || null
-
-	return q
-
-}
-
-
-function parseSpreadsheet() {
-
-	console.log('Parsing spreadsheet data')
-
-	var textEl = document.getElementById('questions')
-
-	/* MAGIC:
-	 *	1. Find quoted multiline cells (<tab>"a<newline>b"<tab>)
-	 *	2. Replace all newlines inside with a special char so the cell won't be
-	 *		split later (<tab>"a<specialchar>b"<tab>)
-	 *	3. Replace escaped quotes ("a ""b"" c") with single ones ("a "b" c")
-	 *	4. Remove the outer quotes and tabs (a<specialchar>b)
-	 *	5. Replace all tabs inside with spaces
-	 *	6. Re-add outer tabs (<tab>a<specialchar>b<tab>)
-	 */
-
-	var text = textEl.value.replace(/\t"([^"\n]|"")+\n([^"]|"")*"/g,
-		m => m.replace(/\n/g, '⎊')
-			  .replace(/""/g, '"')
-			  .replace(/^\t"(.*)"$/, '$1')
-			  .replace(/\t/g, ' ')
-			  .replace(/^(.*)$/g, '\t$1')
-	)
-
-	state.questions = text.split('\n').map(parseLine)
-
-	if (state.questions.some(el => el == null)) {
-		alert('Erroneous data. Please check and re-enter.')
-		return {success: false}
-	}
-
-	localStorage.setItem('state', JSON.stringify(state))
-
-	return {success: true}
 
 }
 
@@ -331,11 +138,6 @@ function reStartQuiz() {
 
 }
 
-
-function updateTitles() {
-	document.querySelector('#prescreen h1').innerHTML = state.title || ''
-	document.querySelector('#quiz h1').innerHTML = state.title || ''
-}
 
 function createQuiz() {
 
@@ -471,75 +273,6 @@ function abortQuiz() {
 
 }
 
-function idFromUrl() {
-
-	var s = window.location.search.split('id=')
-
-	if (s.length <= 1)
-		return null
-
-	return s[1].split('&')[0]
-
-}
-
-async function fetchQuiz(id) {
-
-	console.log('Fetching quiz')
-
-	var url = location.origin + '/db/' + id
-
-	var response = await fetch(url)
-
-	if (response.ok == false) {
-		alert('Something went wrong while loading this quiz')
-		return
-	}
-
-	var json = await response.json()
-
-	console.log('Quiz fetched. Response:')
-	console.log(json)
-
-	return json
-
-}
-
-const memes = [
-	'GE-SUND-BRUN-NEN-CENTER!',
-	'Deine Mudda! Berlin!',
-	'Eine Runde Kicker?',
-	'Hulkdrian!',
-	'Jetz\' bin i\' wieda doa',
-	'Mmmmh Carbonstaub',
-	'#würthshausfranz',
-	'#berlinerluft',
-	'FaST<b>TUBe</b>, not Fast<b>COCUE</b>',
-	'Yes, we CAN',
-	'Ist in der Cloud.',
-	'Ist im Wiki.',
-	'Ich liiebe Teamcenter <3',
-	'Podio kann alles!',
-	'Let\'s build 3 fucking racecars!',
-	'Der Fahrstuhl ist kaputt',
-	'Frau Ipta reißt euch den Kopf ab!',
-	'Max, Max, Max, Max, Max, Max, MaxMax!',
-	'Julian, Anwärter, Firewall',
-	'Diese Webseite ist geerdet.',
-	'Wer AMS sagt muss auch BMS sagen',
-	'Ist der Kabelbinder in der BOM?',
-	'*Fistbump*',
-	'Nividia!',
-	'Ihr schafft das! :)',
-	'Klotzen, nicht kleckern!',
-	'*revving noises*',
-	'Resistance is futile',
-	'Jan schweißt das noch',
-	'Would Claude approve of this?',
-	'Im CAD hat\'s noch gepasst',
-	'¯\\_(ツ)_/¯',
-	'AMK Brudi',
-	'Mmmhh cones',
-]
 
 window.onload = async function() {
 
@@ -547,6 +280,7 @@ window.onload = async function() {
 
 	var browserWarning = document.getElementById('browserwarning')
 
+	// If arrow functions are supported, it's modern enough :P
 	browserWarning.style.display = (() => 'none')()
 
 	var stateString = localStorage.getItem('state')
@@ -577,7 +311,8 @@ window.onload = async function() {
 	}
 
 	updateTitles()
-	document.getElementById('meme').innerHTML = memes[Math.floor(Math.random()*memes.length)]
+	var meme = memes[Math.floor(Math.random()*memes.length)]
+	document.getElementById('meme').innerHTML = meme
 
 	if (stateString && !useUrl)
 		startQuiz()
