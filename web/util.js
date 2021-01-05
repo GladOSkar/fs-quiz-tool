@@ -3,7 +3,9 @@ const defaultState = {
 	id: null,
 	title: null,
 	questions: [],
-	success: 0,
+	success: false,
+	submitTries: 1,
+	submits: 0,
 	submitTime: null,
 	submitTimer: 0,
 	submitInterval: null,
@@ -32,7 +34,7 @@ function updateTitles() {
 }
 
 
-const rules = {
+var rules = {
 	__default__: {
 		sequential: false,
 		submitTries: 1,
@@ -63,6 +65,23 @@ function getRule(name) {
 	console.error('No such rule:', name);
 
 	return undefined
+
+}
+
+function applyRuleSettingsFromForm() {
+
+	switch (state.style) {
+		case 'FSG':
+		case 'FSA':
+			state.questionTime = parseInt(document.getElementById('qTimeField').value)
+			break
+		case 'FSCzech':
+			state.submitTime   = parseInt(document.getElementById('sTOutField').value)
+			break
+		case 'FSSpain':
+			state.submitTries  = parseInt(document.getElementById('sTriesField').value)
+			break
+	}
 
 }
 

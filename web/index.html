@@ -33,7 +33,7 @@
 					Title:<br>
 					<input type="text" id="titleField" required>
 					Style:<br>
-					<select type="select" id="styleField" required>
+					<select type="select" id="styleField" onchange="updateDynamicRuleFields()" required>
 						<option value="FSG"			 >FSG			</option>
 						<option value="FSA"			 >FSA			</option>
 						<option value="FSN"			 >FSN			</option>
@@ -42,6 +42,28 @@
 						<option value="FSSpain"		 >FSSpain		</option>
 						<option value="FSSwitzerland">FSSwitzerland	</option>
 					</select>
+					<div id="extraFields"></div>
+					<script>
+						var drf_sf = document.getElementById('styleField')
+						var drf_ef = document.getElementById('extraFields')
+						function updateDynamicRuleFields() {
+							switch (drf_sf.value) {
+								case 'FSG':
+								case 'FSA':
+									drf_ef.innerHTML = 'Minutes per question:<br><input type="number" id="qTimeField" value="5" min="1" max="30" required>'
+									break
+								case 'FSCzech':
+									drf_ef.innerHTML = 'Seconds Timeout after handin:<br><input type="number" id="sTOutField" value="30" min="1" max="300" required>'
+									break
+								case 'FSSpain':
+									drf_ef.innerHTML = 'Number of handin tries:<br><input type="number" id="sTriesField" value="3" min="1" max="10" required>'
+									break
+								default:
+									drf_ef.innerHTML = ''
+							}
+						}
+						updateDynamicRuleFields()
+					</script>
 					Paste your questions from a spreadsheet here:<br>
 					<textarea rows="16" id="questions" required></textarea>
 					<br>

@@ -134,7 +134,7 @@ function reStartQuiz() {
 
 	state.totalTimer = 0
 	state.submitTimer = 0
-	state.success = 0
+	state.success = false
 
 	startQuiz()
 
@@ -153,6 +153,9 @@ function createQuiz(e) {
 	state.title = document.getElementById('titleField').value
 	state.style = document.getElementById('styleField').value
 
+	// After state.style is set
+	applyRuleSettingsFromForm()
+
 	if (parseSpreadsheet().success == false) {
 		alert('Quiz creation failed.')
 		return
@@ -164,7 +167,8 @@ function createQuiz(e) {
 
 	changeView('prescreen')
 
-	console.log('Quiz created')
+	console.log('Quiz created:')
+	console.log(state)
 
 	return false
 

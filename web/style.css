@@ -89,7 +89,7 @@ input[type="button"]:disabled, input[type="submit"]:disabled {
 	background: #888 !important;
 }
 
-textarea, input[type="text"], select {
+input[type="text"], input[type="number"], textarea, select {
 	background: #ddd;
 	margin-bottom: 16px;
 	padding: .5em;
