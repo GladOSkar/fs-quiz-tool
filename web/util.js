@@ -4,10 +4,14 @@ const defaultState = {
 	title: null,
 	questions: [],
 	success: 0,
+	submitTime: null,
 	submitTimer: 0,
 	submitInterval: null,
 	totalTimer: 0,
 	totalInterval: null,
+	questionTime: null,
+	questionTimer: 0,
+	questionInterval: null,
 }
 
 var state
@@ -25,6 +29,41 @@ clearState()
 function updateTitles() {
 	document.querySelector('#prescreen h1').innerHTML = state.title || ''
 	document.querySelector('#quiz h1').innerHTML = state.title || ''
+}
+
+
+const rules = {
+	__default__: {
+		sequential: false,
+		submitTries: 1,
+		submitTimeout: null,
+		timedQs: false,
+		allowQOvertime: false
+	},
+	'FSG'			: { sequential: true, timedQs: true },
+	'FSA'			: { sequential: true, timedQs: true, allowQOvertime: true },
+	'FSN'			: { sequential: true },
+	'FSEast'		: { sequential: false },
+	'FSCzech'		: { sequential: false, submitTries: Infinity, submitTimeout: 30 },
+	'FSSpain'		: { sequential: true, submitTries: 3 },
+	'FSSwitzerland'	: { sequential: true },
+}
+
+function getRule(name) {
+
+	var r = rules[state.style]
+
+	if (r.hasOwnProperty(name))
+		return r[name]
+
+	var d = rules.__default__
+	if (d.hasOwnProperty(name))
+		return d[name]
+
+	console.error('No such rule:', name);
+
+	return undefined
+
 }
 
 

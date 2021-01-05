@@ -51,7 +51,9 @@ function updateSubmitTimer() {
 
 function startSubmitTimer(time) {
 
-	state.submitTimer = time || 30
+	state.submitTimer = time || state.submitTime
+	if (state.submitTimer == null)
+		return
 
 	console.log('Setting submitTimer to ' + state.submitTimer + ' seconds.')
 
@@ -139,21 +141,20 @@ function reStartQuiz() {
 }
 
 
-function createQuiz() {
+function createQuiz(e) {
+
+	e.preventDefault()
 
 	console.log('Creating new quiz')
-
-	state.title = document.getElementById('titleField').value
-	if (state.title == '') {
-		alert('Please enter a title')
-		return
-	}
 
 	clearState()
 	removeLink()
 
+	state.title = document.getElementById('titleField').value
+	state.style = document.getElementById('styleField').value
+
 	if (parseSpreadsheet().success == false) {
-		console.log('Quiz creation failed.')
+		alert('Quiz creation failed.')
 		return
 	}
 
@@ -164,6 +165,8 @@ function createQuiz() {
 	changeView('prescreen')
 
 	console.log('Quiz created')
+
+	return false
 
 }
 

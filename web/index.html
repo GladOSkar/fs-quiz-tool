@@ -28,15 +28,25 @@
 		<main>
 
 			<div id="spreadsheet" class="view">
-				<form>
+				<form onsubmit="createQuiz(event)">
 
 					Title:<br>
 					<input type="text" id="titleField" required>
+					Style:<br>
+					<select type="select" id="styleField" required>
+						<option value="FSG"			 >FSG			</option>
+						<option value="FSA"			 >FSA			</option>
+						<option value="FSN"			 >FSN			</option>
+						<option value="FSEast"		 >FSEast		</option>
+						<option value="FSCzech"		 >FSCzech		</option>
+						<option value="FSSpain"		 >FSSpain		</option>
+						<option value="FSSwitzerland">FSSwitzerland	</option>
+					</select>
 					Paste your questions from a spreadsheet here:<br>
 					<textarea rows="16" id="questions" required></textarea>
 					<br>
 
-					<input type="button" value="Create Quiz" onclick="createQuiz()">
+					<input type="submit" value="Create Quiz">
 
 				</form>
 			</div>
