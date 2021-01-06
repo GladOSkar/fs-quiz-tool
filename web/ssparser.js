@@ -74,7 +74,9 @@ function parseSpreadsheet() {
 	 *	6. Re-add outer tabs (<tab>a<specialchar>b<tab>)
 	 */
 
-	var text = textEl.value.replace(/\t"([^"\n]|"")+\n([^"]|"")*"/g,
+	var raw = textEl.value.trim()
+
+	var text = raw.replace(/\t"([^"\n]|"")+\n([^"]|"")*"/g,
 		m => m.replace(/\n/g, '⎊')
 			  .replace(/""/g, '"')
 			  .replace(/^\t"(.*)"$/, '$1')
