@@ -27,6 +27,15 @@ function startTotalTimer() {
 
 }
 
+function updateSubmitButton() {
+
+	var button = document.getElementById('quizSubmitButton')
+
+	var lastQuestion = (state.currentQuestion == (state.questions.length - 1))
+
+	button.value = lastQuestion ? 'Submit Answers' : 'Next Question'
+
+}
 
 function updateSubmitTimer() {
 
@@ -40,7 +49,7 @@ function updateSubmitTimer() {
 
 	} else {
 
-		button.value = 'Submit Answers'
+		updateSubmitButton()
 		button.disabled = false
 		clearInterval(state.submitInterval)
 
@@ -64,15 +73,48 @@ function startSubmitTimer(time) {
 }
 
 
+function showSequentialQuestion() {
+
+	var questions = document.querySelectorAll('.question')
+	for (q of questions)
+		q.style.display = null
+
+	updateSubmitButton()
+
+	if (state.currentQuestion !== null) {
+		var q = document.querySelector('#quiz form #question' + state.currentQuestion)
+		q.style.display = 'block'
+	}
+
+}
+
+function nextQuestion() {
+
+	state.currentQuestion++
+
+	if (state.currentQuestion == state.questions.length)
+		state.currentQuestion = null
+
+	showSequentialQuestion()
+
+	return state.currentQuestion
+
+}
+
+
 function renderQuiz() {
 
 	var quizForm = document.querySelector('#quiz form')
+
+	quizForm.className = ''
+	if (getRule('sequential'))
+		quizForm.classList.add('sequential')
 
 	quizForm.innerHTML = ''
 
 	for (const [i, q] of state.questions.entries()) {
 
-		var html = ''
+		var html = `<div class="question" id="question${i}">`
 
 		html += `<h3>Question #${i+1}</h3>`
 		html += `<h4>${q.question}</h4>`
@@ -98,6 +140,7 @@ function renderQuiz() {
 
 		}
 
+		html += '</div>'
 
 		quizForm.innerHTML += html
 
@@ -117,6 +160,9 @@ function startQuiz() {
 
 	changeView('quiz')
 
+	if (getRule('sequential'))
+		showSequentialQuestion(state.currentQuestion)
+
 	if (state.submitTimer > 0)
 		startSubmitTimer(state.submitTimer)
 	else
@@ -132,6 +178,7 @@ function reStartQuiz() {
 
 	console.log('Restarting quiz');
 
+	state.currentQuestion = 0
 	state.totalTimer = 0
 	state.submitTimer = 0
 	state.success = false
@@ -207,6 +254,15 @@ function mergeKeyReducer(acc, entry) {
 
 
 function submitQuiz() {
+
+	if (getRule('sequential')) {
+
+		var n = nextQuestion()
+
+		if (n !== null)
+			return
+
+	}
 
 	console.log('Submitting quiz. State:')
 	console.log(state)

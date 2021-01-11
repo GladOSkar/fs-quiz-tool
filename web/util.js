@@ -3,6 +3,7 @@ const defaultState = {
 	id: null,
 	title: null,
 	questions: [],
+	currentQuestion: 0,
 	success: false,
 	submitTries: 1,
 	submits: 0,
@@ -37,10 +38,10 @@ function updateTitles() {
 var rules = {
 	__default__: {
 		sequential: false,
-		submitTries: 1,
-		submitTimeout: null,
-		timedQs: false,
-		allowQOvertime: false
+		submitTries: 1,			// NYI
+		submitTimeout: null,	// NYI
+		timedQs: false,			// NYI
+		allowQOvertime: false	// NYI
 	},
 	'FSG'			: { sequential: true, timedQs: true },
 	'FSA'			: { sequential: true, timedQs: true, allowQOvertime: true },

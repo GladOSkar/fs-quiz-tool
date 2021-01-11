@@ -126,3 +126,7 @@ input[type="radio"]:hover + p {
 #sharing a {
 	font-size: 16px;
 }
+
+#quiz form.sequential .question {
+	display: none;
+}
