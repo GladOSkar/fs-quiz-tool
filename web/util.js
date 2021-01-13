@@ -2,19 +2,17 @@ const defaultState = {
 	style: 'FSCzech', // enum of { FSG, FSA, FSN, FSEast, FSCzech, FSSpain, FSSwitzerland }
 	id: null,
 	title: null,
+	running: false,
 	questions: [],
 	currentQuestion: 0,
 	success: false,
+	submitTry: 0,
 	submitTries: 1,
-	submits: 0,
 	submitTime: null,
 	submitTimer: 0,
 	submitInterval: null,
 	totalTimer: 0,
 	totalInterval: null,
-	questionTime: null,
-	questionTimer: 0,
-	questionInterval: null,
 }
 
 var state
@@ -38,13 +36,13 @@ function updateTitles() {
 var rules = {
 	__default__: {
 		sequential: false,
-		submitTries: 1,			// NYI
-		submitTimeout: null,	// NYI
-		timedQs: false,			// NYI
-		allowQOvertime: false	// NYI
+		questionTimeout: null,
+		allowQOvertime: false,	// Not implemented correctly
+		submitTries: 1,
+		submitTimeout: null
 	},
-	'FSG'			: { sequential: true, timedQs: true },
-	'FSA'			: { sequential: true, timedQs: true, allowQOvertime: true },
+	'FSG'			: { sequential: true, questionTimeout: 5 },
+	'FSA'			: { sequential: true, questionTimeout: 5, allowQOvertime: true },
 	'FSN'			: { sequential: true },
 	'FSEast'		: { sequential: false },
 	'FSCzech'		: { sequential: false, submitTries: Infinity, submitTimeout: 30 },
@@ -74,13 +72,14 @@ function applyRuleSettingsFromForm() {
 	switch (state.style) {
 		case 'FSG':
 		case 'FSA':
-			state.questionTime = parseInt(document.getElementById('qTimeField').value)
+			state.submitTime  = 60 * parseInt(document.getElementById('qTimeField').value)
 			break
 		case 'FSCzech':
-			state.submitTime   = parseInt(document.getElementById('sTOutField').value)
+			state.submitTime  = parseInt(document.getElementById('sTOutField').value)
+			state.submitTries = rules[state.style].submitTries
 			break
 		case 'FSSpain':
-			state.submitTries  = parseInt(document.getElementById('sTriesField').value)
+			state.submitTries = parseInt(document.getElementById('sTriesField').value)
 			break
 	}
 

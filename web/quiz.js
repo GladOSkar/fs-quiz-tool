@@ -33,7 +33,14 @@ function updateSubmitButton() {
 
 	var lastQuestion = (state.currentQuestion == (state.questions.length - 1))
 
-	button.value = lastQuestion ? 'Submit Answers' : 'Next Question'
+	button.value = lastQuestion || !getRule('sequential') ? 'Submit Answers' : 'Next Question'
+
+}
+
+function resetSubmitButton() {
+
+	updateSubmitButton()
+	document.getElementById('quizSubmitButton').disabled = false
 
 }
 
@@ -43,15 +50,21 @@ function updateSubmitTimer() {
 
 	if (state.submitTimer > 0) {
 
-		button.value = 'Wait ' + state.submitTimer + 's'
+		timetext = state.submitTimer > 60 ?
+			Math.floor(state.submitTimer/60)+':'+(('0' + (state.submitTimer%60)).slice(-2)) :
+			state.submitTimer + 's'
+
+		button.value = 'Wait ' + timetext
 		button.disabled = true
 		state.submitTimer -= 1
 
 	} else {
 
-		updateSubmitButton()
-		button.disabled = false
+		resetSubmitButton()
 		clearInterval(state.submitInterval)
+
+		if (getRule('sequential') && !getRule('allowQOvertime'))
+			submitQuiz()
 
 	}
 
@@ -96,6 +109,9 @@ function nextQuestion() {
 		state.currentQuestion = null
 
 	showSequentialQuestion()
+
+	if (state.currentQuestion !== null && getRule('questionTimeout'))
+		startSubmitTimer()
 
 	return state.currentQuestion
 
@@ -165,10 +181,13 @@ function startQuiz() {
 
 	if (state.submitTimer > 0)
 		startSubmitTimer(state.submitTimer)
+	else if (getRule('questionTimeout'))
+		startSubmitTimer()
 	else
-		updateSubmitTimer()
+		resetSubmitButton()
 
 	startTotalTimer()
+	state.running = true
 
 	console.log('Quiz started/resumed')
 
@@ -178,12 +197,15 @@ function reStartQuiz() {
 
 	console.log('Restarting quiz');
 
-	state.currentQuestion = 0
-	state.totalTimer = 0
-	state.submitTimer = 0
-	state.success = false
+	state.currentQuestion	= defaultState.currentQuestion
+	state.success			= defaultState.success
+	state.submitTry			= defaultState.submitTry
+	state.submitTimer		= defaultState.submitTimer
+	state.submitInterval	= defaultState.submitInterval
+	state.totalTimer		= defaultState.totalTimer
+	state.totalInterval		= defaultState.totalInterval
 
-	startQuiz()
+	changeView('prescreen')
 
 }
 
@@ -225,6 +247,8 @@ function createQuiz(e) {
 function endQuiz() {
 
 	console.log('Ending quiz')
+
+	state.running = false
 
 	localStorage.removeItem('state')
 
@@ -299,20 +323,31 @@ function submitQuiz() {
 
 	}
 
-	var text = '' + correct + '/' + state.questions.length + ' questions answered correctly.\n'
+	var text = '' + correct + '/' + state.questions.length + ' questions answered correctly.'
 
 	state.success = (correct == state.questions.length)
 
-	text += state.success ? 'Yay you did it!' : 'Try again!'
-
 	if (!state.success) {
-		renderQuiz()
-		startSubmitTimer()
-		alert(text)
+		state.submitTry++
+
+		if (getRule('submitTries') && state.submitTry < state.submitTries) {
+			alert(text + `\nThis was try ${state.submitTry}/${state.submitTries}\nClick OK to Try Again`)
+			renderQuiz()
+			if (getRule('sequential')) {
+				state.currentQuestion = 0
+				showSequentialQuestion(state.currentQuestion)
+			}
+
+			if (getRule('submitTimeout'))
+				startSubmitTimer()
+		} else {
+			document.querySelector('#postscreen h1').innerHTML = (text + '<br>Maybe next time :)')
+			endQuiz()
+		}
 	}
 
 	if (state.success) {
-		document.querySelector('#postscreen h1').innerHTML = `Yay, we're done!<br>Everything is correct :)`
+		document.querySelector('#postscreen h1').innerHTML = (text + '<br>Yay you did it!')
 		endQuiz()
 	}
 
@@ -339,8 +374,6 @@ function abortQuiz() {
 
 window.onload = async function() {
 
-	console.log('onload')
-
 	var browserWarning = document.getElementById('browserwarning')
 
 	// If arrow functions are supported, it's modern enough :P
@@ -349,7 +382,7 @@ window.onload = async function() {
 	var stateString = localStorage.getItem('state')
 
 	var urlId = idFromUrl()
-	console.log('URL ID:' + urlId)
+	console.log('URL ID:', urlId)
 
 	if (stateString) {
 
@@ -378,7 +411,10 @@ window.onload = async function() {
 	document.getElementById('meme').innerHTML = meme
 
 	if (stateString && !useUrl)
-		startQuiz()
+		if (state.running)
+			startQuiz()
+		else
+			changeView('prescreen')
 
 	if (!stateString && !useUrl)
 		changeView('spreadsheet')

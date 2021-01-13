@@ -11,6 +11,10 @@
 
 		<title>FS Quiz tool</title>
 
+		<script src="util.js"></script>
+		<script src="ssparser.js"></script>
+		<script src="share.js"></script>
+
 	</head>
 
 	<body>
@@ -50,13 +54,13 @@
 							switch (drf_sf.value) {
 								case 'FSG':
 								case 'FSA':
-									drf_ef.innerHTML = 'Minutes per question:<br><input type="number" id="qTimeField" value="5" min="1" max="30" required>'
+									drf_ef.innerHTML = 'Minutes per question:<br><input type="number" id="qTimeField" value="'+(rules[drf_sf.value].questionTimeout)+'" min="1" max="30" required>'
 									break
 								case 'FSCzech':
-									drf_ef.innerHTML = 'Seconds Timeout after handin:<br><input type="number" id="sTOutField" value="30" min="1" max="300" required>'
+									drf_ef.innerHTML = 'Seconds Timeout after handin:<br><input type="number" id="sTOutField" value="'+(rules['FSCzech'].submitTimeout)+'" min="1" max="300" required>'
 									break
 								case 'FSSpain':
-									drf_ef.innerHTML = 'Number of handin tries:<br><input type="number" id="sTriesField" value="3" min="1" max="10" required>'
+									drf_ef.innerHTML = 'Number of handin tries:<br><input type="number" id="sTriesField" value="'+(rules['FSSpain'].submitTries)+'" min="1" max="10" required>'
 									break
 								default:
 									drf_ef.innerHTML = ''
@@ -87,7 +91,7 @@
 				</div>
 				<form>
 				</form>
-				<input type="button" value="Submit" onclick="submitQuiz()" style="background: #008029" id="quizSubmitButton" disabled>
+				<input type="button" value="Submit" onclick="submitQuiz()" style="background: #008029" id="quizSubmitButton">
 				<input type="button" value="Abort" onclick="abortQuiz()">
 			</div>
 
@@ -107,9 +111,6 @@
 			&middot; <span id="meme"></span>
 		</footer>
 
-		<script src="util.js"></script>
-		<script src="ssparser.js"></script>
-		<script src="share.js"></script>
 		<script src="quiz.js"></script>
 
 	</body>
