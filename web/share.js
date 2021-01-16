@@ -34,8 +34,11 @@ async function shareQuiz() {
 	console.log('Saving quiz to server. QuizData:')
 
 	var quizData = {
+		style: state.style,
 		title: state.title,
-		questions: state.questions
+		questions: state.questions,
+		submitTries: state.submitTries,
+		submitTime: state.submitTime
 	}
 
 	console.log(quizData)

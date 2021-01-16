@@ -1,5 +1,5 @@
 const defaultState = {
-	style: 'FSCzech', // enum of { FSG, FSA, FSN, FSEast, FSCzech, FSSpain, FSSwitzerland }
+	style: 'FSG',
 	id: null,
 	title: null,
 	running: false,

@@ -397,9 +397,13 @@ window.onload = async function() {
 
 		console.log('Using remote quiz from url')
 
-		quiz = await fetchQuiz(urlId)
+		var quiz = await fetchQuiz(urlId)
+
+		state.style = quiz.style
 		state.title = quiz.title
 		state.questions = quiz.questions
+		state.submitTries = quiz.submitTries
+		state.submitTime = quiz.submitTime
 		state.id = urlId
 
 		changeView('prescreen')
