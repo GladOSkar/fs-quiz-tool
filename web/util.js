@@ -46,7 +46,7 @@ var rules = {
 	'FSN'			: { sequential: true },
 	'FSEast'		: { sequential: false },
 	'FSCzech'		: { sequential: false, submitTries: Infinity, submitTimeout: 30 },
-	'FSSpain'		: { sequential: true, submitTries: 3 },
+	'FSSpain'		: { sequential: true, submitTries: 10 },
 	'FSSwitzerland'	: { sequential: true },
 }
 
