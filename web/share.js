@@ -14,6 +14,9 @@ function showLink() {
 
 function removeLink() {
 
+	var link = location.origin
+	history.pushState('', '', link)
+
 	var linkEl = document.getElementById('shareLink')
 	linkEl.href = ''
 	linkEl.innerHTML = ''

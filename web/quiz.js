@@ -372,6 +372,15 @@ function abortQuiz() {
 }
 
 
+function deleteQuiz() {
+
+	clearState()
+	removeLink()
+	changeView('spreadsheet')
+
+}
+
+
 window.onload = async function() {
 
 	var browserWarning = document.getElementById('browserwarning')
