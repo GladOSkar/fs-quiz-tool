@@ -130,3 +130,11 @@ input[type="radio"]:hover + p {
 #quiz form.sequential .question {
 	display: none;
 }
+
+.question.correct h3, .question.correct h4 {
+	color: #008800;
+}
+
+.question.incorrect h3, .question.incorrect h4 {
+	color: #BB0000;
+}

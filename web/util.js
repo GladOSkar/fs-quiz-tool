@@ -4,6 +4,7 @@ const defaultState = {
 	title: null,
 	running: false,
 	questions: [],
+	responses: null,
 	currentQuestion: 0,
 	success: false,
 	submitTry: 0,

@@ -197,6 +197,7 @@ function reStartQuiz() {
 
 	console.log('Restarting quiz');
 
+	state.responses			= defaultState.responses
 	state.currentQuestion	= defaultState.currentQuestion
 	state.success			= defaultState.success
 	state.submitTry			= defaultState.submitTry
@@ -252,7 +253,7 @@ function endQuiz() {
 
 	localStorage.removeItem('state')
 
-	document.querySelector('#quiz form').innerHTML = ''
+	//document.querySelector('#quiz form').innerHTML = ''
 	changeView('postscreen')
 
 	if (state.submitInterval)
@@ -264,13 +265,38 @@ function endQuiz() {
 
 }
 
+function showQuizResults() {
+
+	var quizForm = document.querySelector('#quiz form')
+	quizForm.className = ''
+
+	for (var [idx, value] of state.responses.entries()) {
+
+		console.log(idx+':', value)
+		var el = document.getElementById('question' + idx)
+
+		console.log(el)
+
+		var a = value.answers
+		if (value.correct) {
+			el.classList.add('correct')
+		} else {
+			el.classList.add('incorrect')
+		}
+
+	}
+
+	changeView('quiz')
+
+}
+
 
 function mergeKeyReducer(acc, entry) {
 
 	if (!acc[entry[0]])
-		acc[entry[0]] = []
+		acc[entry[0]] = {answers: [], correct: false}
 
-	acc[entry[0]].push(entry[1])
+	acc[entry[0]].answers.push(entry[1])
 
 	return acc
 
@@ -300,28 +326,34 @@ function submitQuiz() {
 	console.log(responses)
 
 	var correct = 0
+	state.responses = []
 
-	for (var [key, value] of Object.entries(responses)) {
+	for (var idx = 0; idx < state.questions.length; idx++) {
 
-		console.log(key + ": " + value)
+		var value = responses['q'+idx] || {answers: [], correct: false}
 
-		// "q3" -> 3
-		var idx = key.slice(1)
+		console.log(idx + ": " + value)
 
 		if (state.questions[idx].type == 'ChooseOne' || state.questions[idx].type == 'ChooseAny') {
 			state.questions[idx].answers.sort()
-			value.sort()
+			value.answers.sort()
 		}
 
 		var correctAnswer = JSON.stringify(state.questions[idx].answers)
-		var givenAnswer = JSON.stringify(value)
+		var givenAnswer = JSON.stringify(value.answers)
 
 		console.log('Comparing: ' + givenAnswer + ' == ' + correctAnswer + '?: ' + (givenAnswer == correctAnswer))
 
-		if (givenAnswer == correctAnswer)
+		if (givenAnswer == correctAnswer) {
+			value.correct = true
 			correct++
+		}
+
+		state.responses.push(value)
 
 	}
+
+	console.log(state.responses)
 
 	var text = '' + correct + '/' + state.questions.length + ' questions answered correctly.'
 
