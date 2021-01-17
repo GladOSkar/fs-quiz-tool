@@ -270,23 +270,41 @@ function showQuizResults() {
 	var quizForm = document.querySelector('#quiz form')
 	quizForm.className = ''
 
+	console.log('Showing quiz results...')
+
+	changeView('quiz')
+
 	for (var [idx, value] of state.responses.entries()) {
 
-		console.log(idx+':', value)
+		console.log(idx + ':', value)
 		var el = document.getElementById('question' + idx)
 
-		console.log(el)
+		// Mark question correct or incorrect
+		el.classList.add(value.correct ? 'correct' : 'incorrect')
 
-		var a = value.answers
-		if (value.correct) {
-			el.classList.add('correct')
+		// traverse correct answers
+		if (state.questions[idx].type == 'Text') {
+			for (var [i, ans] of state.questions[idx].answers.entries()) {
+				var inp = el.querySelectorAll('input')[i]
+
+				if (inp.value == ans)
+					inp.classList.add('right')
+				else {
+					var note = document.createElement('p')
+					note.innerHTML = ans
+					inp.parentElement.appendChild(note)
+				}
+			}
 		} else {
-			el.classList.add('incorrect')
+			for (var ans of state.questions[idx].answers)
+				el.querySelector(`input[value="${ans}"]`).classList.add('trueans')
 		}
+
+		// TODO: Write out explanation, author
 
 	}
 
-	changeView('quiz')
+	document.querySelector('#quizSubmitButton').innerHTML = 'Back'
 
 }
 
@@ -332,7 +350,7 @@ function submitQuiz() {
 
 		var value = responses['q'+idx] || {answers: [], correct: false}
 
-		console.log(idx + ": " + value)
+		console.log(idx + ":", value)
 
 		if (state.questions[idx].type == 'ChooseOne' || state.questions[idx].type == 'ChooseAny') {
 			state.questions[idx].answers.sort()

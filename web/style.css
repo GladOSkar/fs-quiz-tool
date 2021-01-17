@@ -115,11 +115,11 @@ input[type="radio"] + p, input[type="checkbox"] + p {
 	border-radius: 3px;
 }
 
-input[type="radio"]:checked + p {
-	background: #aaf;
+input[type="radio"]:checked + p, input[type="checkbox"]:checked + p {
+	background: #ddf;
 }
 
-input[type="radio"]:hover + p {
+input[type="radio"]:hover + p, input[type="checkbox"]:hover + p {
 	background: #ddd;
 }
 
@@ -131,10 +131,36 @@ input[type="radio"]:hover + p {
 	display: none;
 }
 
+.question.correct label, .question.incorrect label,
+.question.correct input, .question.incorrect input {
+	pointer-events: none !important;
+}
+
 .question.correct h3, .question.correct h4 {
 	color: #008800;
 }
 
 .question.incorrect h3, .question.incorrect h4 {
 	color: #BB0000;
+}
+
+.question input.trueans + p {
+	color: #008800;
+}
+
+.question.incorrect input:checked:not(.trueans) + p {
+	color: #BB0000;
+}
+
+.question input.right {
+	color: #008800;
+}
+
+.question.incorrect input:not(.right) {
+	color: #BB0000;
+}
+
+.question.incorrect input[type="text"]:not(.right) + p {
+	margin-top: 0;
+	color: #008800;
 }
