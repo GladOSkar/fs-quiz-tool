@@ -49,8 +49,8 @@ function parseLine(line) {
 	}
 
 	// Optional parameters
-	q.explanation	= els[4] || '[No explanation provided]'
-	q.author		= els[5] || '[No author provided]'
+	q.explanation	= els[4] || null
+	q.author		= els[5] || null
 	q.picture		= els[6] || null
 
 	return q

@@ -154,13 +154,31 @@ input[type="radio"]:hover + p, input[type="checkbox"]:hover + p {
 
 .question input.right {
 	color: #008800;
+	border-color: #008800;
 }
 
 .question.incorrect input:not(.right) {
 	color: #BB0000;
+	border-color: #BB0000;
 }
 
 .question.incorrect input[type="text"]:not(.right) + p {
 	margin-top: 0;
 	color: #008800;
+}
+
+.question .meta {
+	background: #ddd;
+	padding: 16px;
+	border-radius: 4px;
+	font-size: 16px;
+}
+
+.question .meta p {
+	margin: 0
+}
+
+.question .meta h5 {
+	font-size: 16px;
+	margin: 16px 0;
 }

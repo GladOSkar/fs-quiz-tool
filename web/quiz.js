@@ -282,9 +282,11 @@ function showQuizResults() {
 		// Mark question correct or incorrect
 		el.classList.add(value.correct ? 'correct' : 'incorrect')
 
+		var q = state.questions[idx]
+
 		// traverse correct answers
 		if (state.questions[idx].type == 'Text') {
-			for (var [i, ans] of state.questions[idx].answers.entries()) {
+			for (var [i, ans] of q.answers.entries()) {
 				var inp = el.querySelectorAll('input')[i]
 
 				if (inp.value == ans)
@@ -296,15 +298,22 @@ function showQuizResults() {
 				}
 			}
 		} else {
-			for (var ans of state.questions[idx].answers)
+			for (var ans of q.answers)
 				el.querySelector(`input[value="${ans}"]`).classList.add('trueans')
 		}
 
 		// TODO: Write out explanation, author
+		var meta = document.createElement('div')
+		meta.className = 'meta'
+		meta.innerHTML = `
+			<p><i>Source/Author: ${q.author || '[No source/author provided]'}</i></p>
+			<h5>Explanation:</h5>
+			<p>${q.explanation || '[No explanation provided]'}</p>`
+		el.appendChild(meta)
 
 	}
 
-	document.querySelector('#quizSubmitButton').innerHTML = 'Back'
+	document.querySelector('#quizSubmitButton').value = 'Back'
 
 }
 
@@ -322,6 +331,10 @@ function mergeKeyReducer(acc, entry) {
 
 
 function submitQuiz() {
+
+	// If not running, we're most likely in review mode. Just switch back.
+	if (state.running == false)
+		changeView('postscreen')
 
 	if (getRule('sequential')) {
 
