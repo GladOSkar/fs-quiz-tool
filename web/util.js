@@ -12,6 +12,7 @@ const defaultState = {
 	submitTime: null,
 	submitTimer: 0,
 	submitInterval: null,
+	questionStartTotalTimer: 0,
 	totalTimer: 0,
 	totalInterval: null,
 }

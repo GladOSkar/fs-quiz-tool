@@ -44,17 +44,19 @@ function resetSubmitButton() {
 
 }
 
+function formatTime(seconds) {
+	return (seconds > 60)
+		? Math.floor(seconds / 60) + ':' + (('0' + (seconds % 60)).slice(-2))
+		: seconds + 's'
+}
+
 function updateSubmitTimer() {
 
 	var button = document.getElementById('quizSubmitButton')
 
 	if (state.submitTimer > 0) {
 
-		timetext = state.submitTimer > 60 ?
-			Math.floor(state.submitTimer/60)+':'+(('0' + (state.submitTimer%60)).slice(-2)) :
-			state.submitTimer + 's'
-
-		button.value = 'Wait ' + timetext
+		button.value = 'Wait ' + formatTime(state.submitTimer)
 		button.disabled = true
 		state.submitTimer -= 1
 
@@ -102,6 +104,11 @@ function showSequentialQuestion() {
 }
 
 function nextQuestion() {
+
+	// Save time taken
+	state.questions[state.currentQuestion].timeTaken = state.totalTimer - state.questionStartTotalTimer
+
+	state.questionStartTotalTimer = state.totalTimer
 
 	state.currentQuestion++
 
@@ -177,7 +184,7 @@ function startQuiz() {
 	changeView('quiz')
 
 	if (getRule('sequential'))
-		showSequentialQuestion(state.currentQuestion)
+		showSequentialQuestion()
 
 	if (state.submitTimer > 0)
 		startSubmitTimer(state.submitTimer)
@@ -197,14 +204,15 @@ function reStartQuiz() {
 
 	console.log('Restarting quiz');
 
-	state.responses			= defaultState.responses
-	state.currentQuestion	= defaultState.currentQuestion
-	state.success			= defaultState.success
-	state.submitTry			= defaultState.submitTry
-	state.submitTimer		= defaultState.submitTimer
-	state.submitInterval	= defaultState.submitInterval
-	state.totalTimer		= defaultState.totalTimer
-	state.totalInterval		= defaultState.totalInterval
+	state.responses					= defaultState.responses
+	state.currentQuestion			= defaultState.currentQuestion
+	state.success					= defaultState.success
+	state.submitTry					= defaultState.submitTry
+	state.submitTimer				= defaultState.submitTimer
+	state.submitInterval			= defaultState.submitInterval
+	state.questionStartTotalTimer	= defaultState.questionStartTotalTimer
+	state.totalTimer				= defaultState.totalTimer
+	state.totalInterval				= defaultState.totalInterval
 
 	changeView('prescreen')
 
@@ -309,6 +317,10 @@ function showQuizResults() {
 			<h5>Explanation:</h5>
 			<p>${q.explanation || '[No explanation provided]'}</p>`
 		el.appendChild(meta)
+
+		var qinfo = (value.correct) ? '✅ Correct' : '❌ Incorrect'
+		if (q.timeTaken) qinfo += ('. Time taken: ' + formatTime(q.timeTaken))
+		el.querySelector('h3').innerHTML += ` &nbsp; <span class="meta">${qinfo}</span>`
 
 	}
 
