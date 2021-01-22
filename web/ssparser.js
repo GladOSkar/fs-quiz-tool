@@ -52,6 +52,7 @@ function parseLine(line) {
 	q.explanation	= els[4] || null
 	q.author		= els[5] || null
 	q.picture		= els[6] || null
+	q.time			= Math.floor(60 * els[7]) || state.submitTime
 
 	return q
 

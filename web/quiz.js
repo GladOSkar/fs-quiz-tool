@@ -73,7 +73,7 @@ function updateSubmitTimer() {
 
 function startSubmitTimer(time) {
 
-	state.submitTimer = time || state.submitTime
+	state.submitTimer = time || state.questions[state.currentQuestion].time || state.submitTime
 	if (state.submitTimer == null)
 		return
 
@@ -302,7 +302,6 @@ function showQuizResults() {
 				el.querySelector(`input[value="${ans}"]`).classList.add('trueans')
 		}
 
-		// TODO: Write out explanation, author
 		var meta = document.createElement('div')
 		meta.className = 'meta'
 		meta.innerHTML = `
@@ -402,7 +401,7 @@ function submitQuiz() {
 			}
 
 			if (getRule('submitTimeout'))
-				startSubmitTimer()
+				startSubmitTimer(state.submitTime)
 		} else {
 			document.querySelector('#postscreen h1').innerHTML = (text + '<br>Maybe next time :)')
 			endQuiz()

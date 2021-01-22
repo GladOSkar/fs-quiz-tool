@@ -39,6 +39,12 @@ D 1.1.1: "[...] a maximum of six drivers are allowed for each team"
 John Doe
 ```
 
+##### Time [minutes]
+
+```text
+3
+```
+
 ## ChooseAny
 
 ##### Question Text
@@ -81,6 +87,12 @@ Jane Doe
 https://i.ibb.co/m8C9VZp/image.png
 ```
 
+##### Time [minutes]
+
+```text
+3
+```
+
 ## Text
 
 ##### Question Text
@@ -119,4 +131,10 @@ Max Mustermann
 
 ```text
 https://i.ibb.co/tYTdw86/2a.png
+```
+
+##### Time [minutes]
+
+```text
+7
 ```

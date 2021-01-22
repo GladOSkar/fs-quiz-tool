@@ -54,7 +54,7 @@
 							switch (drf_sf.value) {
 								case 'FSG':
 								case 'FSA':
-									drf_ef.innerHTML = 'Minutes per question:<br><input type="number" id="qTimeField" value="'+(rules[drf_sf.value].questionTimeout)+'" min="1" max="30" required>'
+									drf_ef.innerHTML = 'Default minutes per question:<br><input type="number" id="qTimeField" value="'+(rules[drf_sf.value].questionTimeout)+'" min="1" max="30" required>'
 									break
 								case 'FSCzech':
 									drf_ef.innerHTML = 'Seconds Timeout after handin:<br><input type="number" id="sTOutField" value="'+(rules['FSCzech'].submitTimeout)+'" min="1" max="300" required>'
