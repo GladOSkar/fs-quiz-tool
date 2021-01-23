@@ -52,7 +52,7 @@ async function shareQuiz() {
 	var response = await fetch(db, {
 		method: 'POST',
 		headers: {'Content-Type': 'text/plain'},
-		body: JSON.stringify(quizData)
+		body: JSON.stringify(quizData, (k,v) => (v == Infinity) ? '__Infinity' : v)
 	})
 
 	if (response.ok == false) {
@@ -92,7 +92,9 @@ async function fetchQuiz(id) {
 		return
 	}
 
-	var json = await response.json()
+	var text = await response.text()
+
+	var json = JSON.parse(text, (k,v) => (v == '__Infinity') ? Infinity : v)
 
 	console.log('Quiz fetched. Response:')
 	console.log(json)
