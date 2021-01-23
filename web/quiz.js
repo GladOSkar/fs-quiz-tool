@@ -12,7 +12,8 @@ function updateFSATeamCountTroll() {
 		return
 	}
 
-	var time = state.questions[state.currentQuestion].time
+	// `|| state.submitTime` is a workaround for saved Qs that don't have a time set yet
+	var time = state.questions[state.currentQuestion].time || state.submitTime
 	var timeratio = 1 - (state.submitTimer / time)
 	var slowAnswerChance = Math.random()*2*Math.pow(timeratio, 2)
 	var quickAnswerChance = (Math.random()+Math.sqrt(69/time))/3
