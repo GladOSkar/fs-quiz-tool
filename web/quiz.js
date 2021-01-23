@@ -547,6 +547,11 @@ window.onload = async function() {
 		state.submitTime = quiz.submitTime
 		state.id = urlId
 
+		// Workaround for quizzes that were saved before the fix
+		// Where the stored value is null instead of Infinity
+		if (state.style == 'FSCzech')
+			state.submitTries = Infinity
+
 		changeView('prescreen')
 
 	}
