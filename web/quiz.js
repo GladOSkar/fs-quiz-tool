@@ -16,7 +16,7 @@ function updateFSATeamCountTroll() {
 	var time = state.questions[state.currentQuestion].time || state.submitTime
 	var timeratio = 1 - (state.submitTimer / time)
 	var slowAnswerChance = Math.random()*2*Math.pow(timeratio, 2)
-	var quickAnswerChance = (Math.random()+Math.sqrt(69/time))/3
+	var quickAnswerChance = (Math.random()+Math.sqrt(69/time))/4
 	var chance = Math.round(slowAnswerChance + quickAnswerChance)
 	var magnitude = Math.round((Math.random()/2+timeratio)*6)
 	var nt = chance * magnitude
@@ -31,9 +31,10 @@ function updateTotalTimer() {
 	var timerEls = document.querySelectorAll('.totaltimer')
 
 	for (timerEl of timerEls)
-		timerEl.innerHTML = formatTime(state.totalTimer);
+		timerEl.innerHTML = 'Total time: ' + formatTime(state.totalTimer);
 
-	state.totalTimer++
+	if (!state.waitNextQuestion)
+		state.totalTimer++
 
 	localStorage.setItem('state', JSON.stringify(state))
 
@@ -123,7 +124,7 @@ function startSubmitTimer(time) {
 }
 
 
-function showSequentialQuestion(n) {
+function updateSequentialQuestion() {
 
 	var questions = document.querySelectorAll('.question')
 	for (q of questions)
@@ -131,8 +132,8 @@ function showSequentialQuestion(n) {
 
 	updateSubmitInfo()
 
-	if (n !== null) {
-		var q = document.querySelector('#quiz form #question' + n)
+	if (state.currentQuestion !== null && !state.waitNextQuestion) {
+		var q = document.querySelector('#quiz form #question' + state.currentQuestion)
 		q.style.display = 'block'
 	}
 
@@ -143,10 +144,17 @@ function nextQuestion() {
 	// Save time taken
 	state.questions[state.currentQuestion].timeTaken = state.totalTimer - state.questionStartTotalTimer
 
-	if (getRule('questionTimeout') && (state.submitTimer > 0)
-		&& (state.currentQuestion != (state.questions.length-1))) {
+	// Last question
+	if (state.currentQuestion == (state.questions.length - 1)) {
+		state.currentQuestion = null
+		updateSequentialQuestion()
+		return
+	}
+
+	// Waiting for next question
+	if (getRule('questionTimeout') && (state.submitTimer > 0)) {
 		state.waitNextQuestion = true;
-		showSequentialQuestion(null) // hide question
+		updateSequentialQuestion() // hide question
 		return
 	}
 
@@ -162,12 +170,9 @@ function nextQuestion() {
 
 	state.currentQuestion++
 
-	if (state.currentQuestion == state.questions.length)
-		state.currentQuestion = null
+	updateSequentialQuestion()
 
-	showSequentialQuestion(state.currentQuestion)
-
-	if (state.currentQuestion !== null && getRule('questionTimeout'))
+	if (getRule('questionTimeout'))
 		startSubmitTimer()
 
 }
@@ -232,7 +237,7 @@ function startQuiz() {
 	changeView('quiz')
 
 	if (getRule('sequential'))
-		showSequentialQuestion(state.currentQuestion)
+		updateSequentialQuestion()
 
 	if (state.submitTimer > 0)
 		startSubmitTimer(state.submitTimer)
@@ -373,13 +378,15 @@ function showQuizResults() {
 			qinfo += ('. Time taken: ' + formatTime(q.timeTaken))
 			if (value.correct && getRule('allowQOvertime'))
 				qinfo += (', Bonus points ' + ((q.timeTaken <= q.time) ? 'received' : 'lost'))
-			else if (q.timeTaken == q.time)
+			else if (q.timeTaken >= (q.time - 1) && !getRule('allowQOvertime'))
 				qinfo += ', Time ran out'
 		}
 		el.querySelector('h3').innerHTML += ` &nbsp; <span class="meta">${qinfo}</span>`
 
 	}
 
+	document.querySelector('#fsateamcounttroll').innerHTML = ''
+	document.querySelector('#submitinfo').innerHTML = ''
 	document.querySelector('#quizSubmitButton').value = 'Back'
 
 }
@@ -468,7 +475,7 @@ function submitQuiz() {
 			renderQuiz()
 			if (getRule('sequential')) {
 				state.currentQuestion = 0
-				showSequentialQuestion(state.currentQuestion)
+				updateSequentialQuestion()
 			}
 
 			if (getRule('submitTimeout'))
