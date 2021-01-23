@@ -6,6 +6,7 @@ const defaultState = {
 	questions: [],
 	responses: null,
 	currentQuestion: 0,
+	waitNextQuestion: false,
 	success: false,
 	submitTry: 0,
 	submitTries: 1,
@@ -15,6 +16,7 @@ const defaultState = {
 	questionStartTotalTimer: 0,
 	totalTimer: 0,
 	totalInterval: null,
+	fsaTeamCountTroll: 0
 }
 
 var state
@@ -85,6 +87,13 @@ function applyRuleSettingsFromForm() {
 			break
 	}
 
+}
+
+
+function formatTime(seconds) {
+	return (seconds > 60)
+		? Math.floor(seconds / 60) + ':' + (('0' + (seconds % 60)).slice(-2))
+		: seconds + 's'
 }
 
 

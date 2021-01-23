@@ -1,18 +1,43 @@
+function showFSATeamCountTroll() {
+
+	var fsatctel = document.getElementById('fsateamcounttroll')
+	fsatctel.innerHTML = (state.fsaTeamCountTroll + ' teams have already answered this question')
+
+}
+
+function updateFSATeamCountTroll() {
+
+	if (state.fsaTeamCountTroll > (128*Math.random())) {
+		showFSATeamCountTroll()
+		return
+	}
+
+	var time = state.questions[state.currentQuestion].time
+	var timeratio = 1 - (state.submitTimer / time)
+	var slowAnswerChance = Math.random()*2*Math.pow(timeratio, 2)
+	var quickAnswerChance = (Math.random()+Math.sqrt(69/time))/3
+	var chance = Math.round(slowAnswerChance + quickAnswerChance)
+	var magnitude = Math.round((Math.random()/2+timeratio)*6)
+	var nt = chance * magnitude
+	state.fsaTeamCountTroll += nt
+
+	showFSATeamCountTroll()
+
+}
+
 function updateTotalTimer() {
 
 	var timerEls = document.querySelectorAll('.totaltimer')
 
-	var minutes = Math.floor(state.totalTimer / 60)
-	var seconds = state.totalTimer % 60
-
-	var text = minutes + ':' + ('0' + seconds).slice(-2)
-
 	for (timerEl of timerEls)
-		timerEl.innerHTML = text
+		timerEl.innerHTML = formatTime(state.totalTimer);
 
 	state.totalTimer++
 
 	localStorage.setItem('state', JSON.stringify(state))
+
+	if (state.style == 'FSA')
+		updateFSATeamCountTroll()
 
 }
 
@@ -27,9 +52,34 @@ function startTotalTimer() {
 
 }
 
-function updateSubmitButton() {
+function updateSubmitInfo() {
 
 	var button = document.getElementById('quizSubmitButton')
+	var si = document.getElementById('submitinfo')
+
+	if (getRule('submitTimeout') || state.waitNextQuestion) {
+		if (state.submitTimer > 0) {
+			si.innerHTML = state.waitNextQuestion ? 'Waiting for next question' : 'Wait to retry'
+			button.value = 'Wait ' + formatTime(state.submitTimer)
+			button.disabled = true
+			return
+		}
+	}
+
+	si.innerHTML = ''
+	button.disabled = false
+
+	if (getRule('questionTimeout')) {
+		if (state.submitTimer > 0) {
+			if (getRule('allowQOvertime'))
+				si.innerHTML = ('Losing bonus points in ' + formatTime(state.submitTimer))
+			else
+				si.innerHTML = ('Forced hand-in in ' + formatTime(state.submitTimer))
+		} else {
+			if (getRule('allowQOvertime'))
+				document.getElementById('submitinfo').innerHTML = 'Bonus points lost.'
+		}
+	}
 
 	var lastQuestion = (state.currentQuestion == (state.questions.length - 1))
 
@@ -37,38 +87,22 @@ function updateSubmitButton() {
 
 }
 
-function resetSubmitButton() {
-
-	updateSubmitButton()
-	document.getElementById('quizSubmitButton').disabled = false
-
-}
-
-function formatTime(seconds) {
-	return (seconds > 60)
-		? Math.floor(seconds / 60) + ':' + (('0' + (seconds % 60)).slice(-2))
-		: seconds + 's'
-}
-
 function updateSubmitTimer() {
 
-	var button = document.getElementById('quizSubmitButton')
-
-	if (state.submitTimer > 0) {
-
-		button.value = 'Wait ' + formatTime(state.submitTimer)
-		button.disabled = true
+	if (state.submitTimer > 0)
 		state.submitTimer -= 1
 
-	} else {
+	if (state.submitTimer == 0) {
 
-		resetSubmitButton()
 		clearInterval(state.submitInterval)
 
-		if (getRule('sequential') && !getRule('allowQOvertime'))
-			submitQuiz()
+		if (getRule('questionTimeout'))
+			if (state.waitNextQuestion || !getRule('allowQOvertime'))
+				submitQuiz() // Force next question
 
 	}
+
+	updateSubmitInfo()
 
 }
 
@@ -88,16 +122,16 @@ function startSubmitTimer(time) {
 }
 
 
-function showSequentialQuestion() {
+function showSequentialQuestion(n) {
 
 	var questions = document.querySelectorAll('.question')
 	for (q of questions)
 		q.style.display = null
 
-	updateSubmitButton()
+	updateSubmitInfo()
 
-	if (state.currentQuestion !== null) {
-		var q = document.querySelector('#quiz form #question' + state.currentQuestion)
+	if (n !== null) {
+		var q = document.querySelector('#quiz form #question' + n)
 		q.style.display = 'block'
 	}
 
@@ -108,6 +142,21 @@ function nextQuestion() {
 	// Save time taken
 	state.questions[state.currentQuestion].timeTaken = state.totalTimer - state.questionStartTotalTimer
 
+	if (getRule('questionTimeout') && (state.submitTimer > 0)
+		&& (state.currentQuestion != (state.questions.length-1))) {
+		state.waitNextQuestion = true;
+		showSequentialQuestion(null) // hide question
+		return
+	}
+
+	state.waitNextQuestion = false
+
+	if (state.style == 'FSA') {
+		state.fsaTeamCountTroll = 0
+		showFSATeamCountTroll()
+	}
+
+	// Start next question
 	state.questionStartTotalTimer = state.totalTimer
 
 	state.currentQuestion++
@@ -115,12 +164,10 @@ function nextQuestion() {
 	if (state.currentQuestion == state.questions.length)
 		state.currentQuestion = null
 
-	showSequentialQuestion()
+	showSequentialQuestion(state.currentQuestion)
 
 	if (state.currentQuestion !== null && getRule('questionTimeout'))
 		startSubmitTimer()
-
-	return state.currentQuestion
 
 }
 
@@ -184,14 +231,14 @@ function startQuiz() {
 	changeView('quiz')
 
 	if (getRule('sequential'))
-		showSequentialQuestion()
+		showSequentialQuestion(state.currentQuestion)
 
 	if (state.submitTimer > 0)
 		startSubmitTimer(state.submitTimer)
 	else if (getRule('questionTimeout'))
 		startSubmitTimer()
 	else
-		resetSubmitButton()
+		updateSubmitInfo()
 
 	startTotalTimer()
 	state.running = true
@@ -206,6 +253,7 @@ function reStartQuiz() {
 
 	state.responses					= defaultState.responses
 	state.currentQuestion			= defaultState.currentQuestion
+	state.waitNextQuestion			= defaultState.waitNextQuestion
 	state.success					= defaultState.success
 	state.submitTry					= defaultState.submitTry
 	state.submitTimer				= defaultState.submitTimer
@@ -213,6 +261,7 @@ function reStartQuiz() {
 	state.questionStartTotalTimer	= defaultState.questionStartTotalTimer
 	state.totalTimer				= defaultState.totalTimer
 	state.totalInterval				= defaultState.totalInterval
+	state.fsaTeamCountTroll			= defaultState.fsaTeamCountTroll
 
 	changeView('prescreen')
 
@@ -319,7 +368,13 @@ function showQuizResults() {
 		el.appendChild(meta)
 
 		var qinfo = (value.correct) ? '✅ Correct' : '❌ Incorrect'
-		if (q.timeTaken) qinfo += ('. Time taken: ' + formatTime(q.timeTaken))
+		if (q.timeTaken) {
+			qinfo += ('. Time taken: ' + formatTime(q.timeTaken))
+			if (value.correct && getRule('allowQOvertime'))
+				qinfo += (', Bonus points ' + ((q.timeTaken <= q.time) ? 'received' : 'lost'))
+			else if (q.timeTaken == q.time)
+				qinfo += ', Time ran out'
+		}
 		el.querySelector('h3').innerHTML += ` &nbsp; <span class="meta">${qinfo}</span>`
 
 	}
@@ -344,14 +399,17 @@ function mergeKeyReducer(acc, entry) {
 function submitQuiz() {
 
 	// If not running, we're most likely in review mode. Just switch back.
-	if (state.running == false)
+	if (state.running == false) {
 		changeView('postscreen')
+		return
+	}
 
 	if (getRule('sequential')) {
 
-		var n = nextQuestion()
+		nextQuestion()
 
-		if (n !== null)
+		// Not at the end of the quiz yet
+		if (state.currentQuestion !== null)
 			return
 
 	}
