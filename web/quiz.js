@@ -54,6 +54,18 @@ function startTotalTimer() {
 
 }
 
+function skipWaitNextQuestion(event) {
+
+	if (!event.ctrlKey || !event.shiftKey)
+		return
+
+	console.log('Skipping/Bypassing wait timer')
+
+	state.submitTimer = 0
+	updateSubmitTimer()
+
+}
+
 function updateSubmitInfo() {
 
 	var button = document.getElementById('quizSubmitButton')
@@ -63,13 +75,15 @@ function updateSubmitInfo() {
 		if (state.submitTimer > 0) {
 			si.innerHTML = state.waitNextQuestion ? 'Waiting for next question' : 'Wait to retry'
 			button.value = 'Wait ' + formatTime(state.submitTimer)
-			button.disabled = true
+			button.readOnly = true
+			button.addEventListener('click', skipWaitNextQuestion)
 			return
 		}
 	}
 
 	si.innerHTML = ''
-	button.disabled = false
+	button.readOnly = false
+	button.removeEventListener('click', skipWaitNextQuestion)
 
 	if (getRule('questionTimeout')) {
 		if (state.submitTimer > 0) {

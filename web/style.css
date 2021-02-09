@@ -84,7 +84,7 @@ input[type="button"].center, input[type="submit"].center {
 	float: none;
 }
 
-input[type="button"]:disabled, input[type="submit"]:disabled {
+input[type="button"][readonly], input[type="submit"][readonly] {
 	cursor: auto;
 	background: #888 !important;
 }
