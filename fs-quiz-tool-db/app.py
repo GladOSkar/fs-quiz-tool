@@ -20,7 +20,9 @@ def startup():
 		fd = open(filename)
 		data = json.load(fd)
 	except FileNotFoundError:
-		pass
+		print("DB file not found, creating on POST/write.")
+	finally:
+		fd.close()
 
 
 @app.route('/db/<id>', methods = ['GET'])
@@ -45,20 +47,15 @@ def post():
 	id = generateNewKey()
 	data[id] = request.data.decode('UTF-8')
 
-	return id, 201
-
-
-def dumpDB():
-
-	if len(data) == 0:
-		return
-
 	try:
 		fd = open(filename, 'w+')
-		json.dump(data, fd)
+		json.dump(data, fd, indent=2)
+	except e:
+		print("Failed to open/create DB file for writing:", e)
 	finally:
 		fd.close()
 
+	return id, 201
+
 
 startup()
-atexit.register(dumpDB)
