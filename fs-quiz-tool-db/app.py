@@ -24,6 +24,8 @@ def startup():
 	finally:
 		fd.close()
 
+	print("Read", len(data), "quizzes from DB")
+
 
 @app.route('/db/<id>', methods = ['GET'])
 def get(id):
@@ -46,6 +48,8 @@ def post():
 
 	id = generateNewKey()
 	data[id] = request.data.decode('UTF-8')
+
+	print("Received new quiz. ID:", id)
 
 	try:
 		fd = open(filename, 'w+')
