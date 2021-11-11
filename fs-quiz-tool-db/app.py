@@ -19,10 +19,9 @@ def startup():
 	try:
 		fd = open(filename)
 		data = json.load(fd)
+		fd.close()
 	except FileNotFoundError:
 		print("DB file not found, creating on POST/write.")
-	finally:
-		fd.close()
 
 	print("Read", len(data), "quizzes from DB")
 
@@ -54,10 +53,9 @@ def post():
 	try:
 		fd = open(filename, 'w+')
 		json.dump(data, fd, indent=2)
+		fd.close()
 	except e:
 		print("Failed to open/create DB file for writing:", e)
-	finally:
-		fd.close()
 
 	return id, 201
 
