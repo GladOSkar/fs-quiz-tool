@@ -56,7 +56,7 @@ function startTotalTimer() {
 
 function skipWaitNextQuestion(event) {
 
-	if (!event.ctrlKey || !event.shiftKey)
+	if (!event.shiftKey)
 		return
 
 	console.log('Skipping/Bypassing wait timer')
