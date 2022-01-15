@@ -16,7 +16,8 @@ const defaultState = {
 	questionStartTotalTimer: 0,
 	totalTimer: 0,
 	totalInterval: null,
-	fsaTeamCountTroll: 0
+	fsaTeamCountTroll: 0,
+	resultsShown: false
 }
 
 var state

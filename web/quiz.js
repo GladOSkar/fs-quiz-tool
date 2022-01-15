@@ -282,6 +282,7 @@ function reStartQuiz() {
 	state.totalTimer				= defaultState.totalTimer
 	state.totalInterval				= defaultState.totalInterval
 	state.fsaTeamCountTroll			= defaultState.fsaTeamCountTroll
+	state.resultsShown				= defaultState.resultsShown
 
 	changeView('prescreen')
 
@@ -351,6 +352,10 @@ function showQuizResults() {
 
 	changeView('quiz')
 
+	// Prevent result metadata being added more than once
+	if (state.resultsShown)
+		return
+
 	for (var [idx, value] of state.responses.entries()) {
 
 		console.log(idx + ':', value)
@@ -398,6 +403,8 @@ function showQuizResults() {
 		el.querySelector('h3').innerHTML += ` &nbsp; <span class="meta">${qinfo}</span>`
 
 	}
+
+	state.resultsShown = true
 
 	document.querySelector('#fsateamcounttroll').innerHTML = ''
 	document.querySelector('#submitinfo').innerHTML = ''
