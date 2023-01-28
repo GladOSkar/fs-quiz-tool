@@ -50,7 +50,7 @@ var rules = {
 	'FSA'			: { sequential: true, questionTimeout: 5, allowQOvertime: true },
 	'FSN'			: { sequential: true },
 	'FSEast'		: { sequential: false },
-	'FSCzech'		: { sequential: false, submitTries: Infinity, submitTimeout: 30 },
+	'FSCzech'		: { sequential: false, submitTries: Infinity, submitTimeout: 60 },
 	'FSSpain'		: { sequential: true, submitTries: 10 },
 	'FSSwitzerland'	: { sequential: true },
 }
