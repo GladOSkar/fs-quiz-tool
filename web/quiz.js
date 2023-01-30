@@ -5,16 +5,14 @@ function showFSATeamCountTroll() {
 
 }
 
-function updateFSATeamCountTroll() {
+function updateFSATeamCountTroll(time) {
 
 	if (state.fsaTeamCountTroll > (128*Math.random())) {
 		showFSATeamCountTroll()
 		return
 	}
 
-	// `|| state.submitTime` is a workaround for saved Qs that don't have a time set yet
-	var time = state.questions[state.currentQuestion].time || state.submitTime
-	var timeratio = 1 - (state.submitTimer / time)
+	var timeratio = 1 - state.submitTimer / time
 	var slowAnswerChance = Math.random()*2*Math.pow(timeratio, 2)
 	var quickAnswerChance = (Math.random()+Math.sqrt(69/time))/4
 	var chance = Math.round(slowAnswerChance + quickAnswerChance)
@@ -23,6 +21,32 @@ function updateFSATeamCountTroll() {
 	state.fsaTeamCountTroll += nt
 
 	showFSATeamCountTroll()
+
+}
+
+function updateFSABonusPoints(time) {
+
+	if (state.waitNextQuestion)
+		return
+
+	var bonuspart = (state.submitTimer - 0.333 * time) / (time * 0.666)
+
+	var barel = document.querySelector('#fsapointbar > div')
+	barel.style.width = Math.round(bonuspart*100) + '%'
+
+	var bonusinfoel = document.getElementById('fsabonuspointsinfo')
+	var points = Math.round(bonuspart*10)
+	bonusinfoel.innerHTML = ((points > 0) ? points : 'No') + ' Bonus points'
+
+}
+
+function updateFSAStuff() {
+
+	// `|| state.submitTime` is a workaround for saved Qs that don't have a time set yet
+	var time = state.questions[state.currentQuestion].time || state.submitTime
+
+	updateFSABonusPoints(time)
+	updateFSATeamCountTroll(time)
 
 }
 
@@ -39,7 +63,7 @@ function updateTotalTimer() {
 	localStorage.setItem('state', JSON.stringify(state))
 
 	if (state.style == 'FSA')
-		updateFSATeamCountTroll()
+		updateFSAStuff()
 
 }
 
@@ -88,22 +112,24 @@ function updateSubmitInfo() {
 	if (getRule('questionTimeout')) {
 		if (state.submitTimer > 0) {
 			if (getRule('allowQOvertime'))
-				si.innerHTML = ('Losing bonus points in ' + formatTime(state.submitTimer))
+				si.innerHTML = ('Next question timer starts in ' + formatTime(state.submitTimer))
 			else
 				si.innerHTML = ( 'Question failed in ' + formatTime(state.submitTimer))
 		} else {
 			if (getRule('allowQOvertime'))
-				document.getElementById('submitinfo').innerHTML = 'Bonus points lost.'
+				document.getElementById('submitinfo').innerHTML = 'Next question timer started.'
 		}
 	}
 
 	var lastQuestion = (state.currentQuestion == (state.questions.length - 1))
 
-	button.value = lastQuestion || !getRule('sequential') ? 'Submit Answers' : 'Next Question'
+	button.value = lastQuestion || !getRule('sequential') ? 'Submit Answers' :
+		((state.submitTimer > 0) ? 'Submit' : 'Next Question')
 
 }
 
 function resetQuestionResponse(qn) {
+
 	var q = document.querySelector('#quiz form #question' + qn)
 	var inputs = q.querySelectorAll('input')
 
@@ -118,6 +144,7 @@ function resetQuestionResponse(qn) {
 				break;
 		}
 	}
+
 }
 
 function updateSubmitTimer() {
@@ -196,6 +223,9 @@ function nextQuestion() {
 	if (state.style == 'FSA') {
 		state.fsaTeamCountTroll = 0
 		showFSATeamCountTroll()
+		// a lil' surprise
+		document.querySelector('#fsapointbar > div').style.background =
+			(Math.random() < 0.05) ? "left / auto 100% url('nyan.png')" : "darkred"
 	}
 
 	// Start next question
@@ -254,6 +284,9 @@ function renderQuiz() {
 		quizForm.innerHTML += html
 
 	}
+
+	var fsastuffel = document.getElementById('fsastuff')
+	fsastuffel.style.display = (state.style == 'FSA') ? 'block' : 'none'
 
 }
 
