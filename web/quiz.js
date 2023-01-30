@@ -90,7 +90,7 @@ function updateSubmitInfo() {
 			if (getRule('allowQOvertime'))
 				si.innerHTML = ('Losing bonus points in ' + formatTime(state.submitTimer))
 			else
-				si.innerHTML = ('Forced hand-in in ' + formatTime(state.submitTimer))
+				si.innerHTML = ( 'Question failed in ' + formatTime(state.submitTimer))
 		} else {
 			if (getRule('allowQOvertime'))
 				document.getElementById('submitinfo').innerHTML = 'Bonus points lost.'
@@ -103,6 +103,23 @@ function updateSubmitInfo() {
 
 }
 
+function resetQuestionResponse(qn) {
+	var q = document.querySelector('#quiz form #question' + qn)
+	var inputs = q.querySelectorAll('input')
+
+	for (input of inputs) {
+		switch (input.type) {
+			case 'radio':
+			case 'checkbox':
+				input.checked = false
+				break;
+			case 'text':
+				input.value = ""
+				break;
+		}
+	}
+}
+
 function updateSubmitTimer() {
 
 	if (state.submitTimer > 0)
@@ -112,9 +129,11 @@ function updateSubmitTimer() {
 
 		clearInterval(state.submitInterval)
 
-		if (getRule('questionTimeout'))
-			if (state.waitNextQuestion || !getRule('allowQOvertime'))
-				submitQuiz() // Force next question
+		if (getRule('questionTimeout') && !getRule('allowQOvertime')) {
+			console.log("Question not submitted, clearing input");
+			resetQuestionResponse(state.currentQuestion);
+			submitQuiz() // Force next question
+		}
 
 	}
 
