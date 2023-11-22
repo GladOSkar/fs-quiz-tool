@@ -157,8 +157,12 @@ function updateSubmitTimer() {
 		clearInterval(state.submitInterval)
 
 		if (getRule('questionTimeout') && !getRule('allowQOvertime')) {
-			console.log("Question not submitted, clearing input");
-			resetQuestionResponse(state.currentQuestion);
+
+			if (!state.waitNextQuestion) {
+				console.log("Question not submitted, clearing input");
+				resetQuestionResponse(state.currentQuestion);
+			}
+
 			submitQuiz() // Force next question
 		}
 
