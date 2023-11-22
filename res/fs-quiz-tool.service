@@ -4,6 +4,9 @@ After=syslog.target network.target nginx.service
 
 [Service]
 User=www-data
+Group=www-data
+ReadWriteDirectories=/var/fs-quiz-tool-db
+WorkingDirectory=/var/fs-quiz-tool-db
 ExecStart=/usr/bin/python3 -m fs-quiz-tool-db
 Restart=always
 
