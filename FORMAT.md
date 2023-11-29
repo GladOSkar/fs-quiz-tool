@@ -3,6 +3,13 @@ FS Quiz Tool question format
 
 This document provides examples for the question format
 
+The web tool will accept these in TSV format, as copied from a spreadsheet like Google Sheets. One Question is one row of the TSV, and each column is one of the following fields, like:
+
+Input Type | Question | Choices/Answer Options  | Answers | Explanation | Author | Picture Link    | Time in minutes
+-----------|----------|-------------------------|---------|-------------|--------|-----------------|----------------
+ChooseOne  | ...      | a<br>b                  | 2       | ...         | ...    | https://url.jpg | 3
+Text       | ...      | Answer in W, 2 decimals | 4.20    | ...         | ...    |                 | 5
+
 ## ChooseOne
 
 Single-Choice question
