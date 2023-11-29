@@ -12,3 +12,7 @@ python3 -m fs-quiz-tool-db
 ```
 
 Then, open <http://localhost:12345> in your browser.
+
+## License
+
+See LICENSE.md
